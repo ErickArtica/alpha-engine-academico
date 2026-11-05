@@ -58,6 +58,22 @@
     "deploy/render/academic_only.py",
     "deploy/render/academic_nvidia.py",
     "alpha_engine/news/marketaux.py",
-    "tests/test_academic_provider_reliability.py"
+    "tests/test_academic_provider_reliability.py",
+    ".gitignore",
+    ".env.local.example",
+    "docker-compose.yml",
+    "README.md",
+    "deploy/local/Dockerfile.api.dockerignore",
+    "deploy/local/Dockerfile.streamlit.dockerignore",
+    "docs/01_INSTALACION_LOCAL.md",
+    "docs/02_DESPLIEGUE_NUBE.md",
+    "docs/03_VARIABLES_Y_CREDENCIALES.md",
+    "docs/04_PRUEBAS_DE_RECONSTRUCCION.md",
+    "scripts/configure_local.py",
+    "scripts/configure_academic_users.py",
+    "scripts/verify_local.py",
+    "scripts/probe_academic_provider.py",
+    "tests/test_marketaux_diagnostics.py",
+    "tests/test_reconstruction_helpers.py"
   ]
 }

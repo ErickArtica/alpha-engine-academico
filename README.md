@@ -1,5 +1,15 @@
 # ALPHA ENGINE — proyecto académico
 
+## Guías actuales de reconstrucción
+
+1. [Instalación local](docs/01_INSTALACION_LOCAL.md)
+2. [Despliegue cloud](docs/02_DESPLIEGUE_NUBE.md)
+3. [Variables y credenciales](docs/03_VARIABLES_Y_CREDENCIALES.md)
+4. [Pruebas de reconstrucción](docs/04_PRUEBAS_DE_RECONSTRUCCION.md)
+
+La corrección Marketaux permite relevancia superior a 100 y añade diagnósticos de descarte. Está preparada y probada en fuentes/local; no se ha desplegado ni activado Marketaux en Render. Noticias siguen apagadas por derechos pendientes. Compose usa `.env.local.example` y secretos propios; no depende de Supabase ni Render. El perfil local y el cloud son distintos.
+
+
 Sistema de Business Analytics para BTC/USDT: analítica descriptiva, predictiva y prescriptiva. No ejecuta trading real ni garantiza rentabilidad.
 
 **Aplicación pública funcionando:** https://alpha-engine-frontend.onrender.com/

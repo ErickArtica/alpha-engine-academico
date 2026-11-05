@@ -94,7 +94,7 @@ class NewsArticle(BaseModel):
     published_at: datetime
     bitcoin_symbol: Literal["CC:BTC", "BTCUSD"] = "CC:BTC"
     bitcoin_name: Literal["Bitcoin"] = "Bitcoin"
-    match_score: float | None = Field(default=None, ge=0, le=100, allow_inf_nan=False)
+    match_score: float | None = Field(default=None, ge=0, allow_inf_nan=False, strict=True)
     sentiment_score: float | None = Field(default=None, ge=-1, le=1, allow_inf_nan=False, strict=True)
     sentiment_status: Literal["VALID", "MISSING", "INVALID", "AMBIGUOUS"]
 
@@ -112,37 +112,87 @@ class NewsArticle(BaseModel):
         return utc(value)
 
 
+def _finite_nonnegative(value):
+    if type(value) not in {int, float}:
+        return False
+    try:
+        return math.isfinite(value) and value >= 0
+    except OverflowError:
+        return False
+
+
+def _record(diagnostics, *codes):
+    if diagnostics is not None:
+        counts = diagnostics.setdefault("reason_counts", {})
+        for code in set(codes):
+            counts[code] = counts.get(code, 0) + 1
+
+
 def normalize_marketaux_article(item: object, cutoff: datetime, token: str = "", *,
-                               min_match_score: float = 0) -> NewsArticle | None:
+                               min_match_score: float = 0, diagnostics: dict | None = None) -> NewsArticle | None:
+    """Normalize metadata; diagnostics contain only fixed codes and counters.
+
+    Missing/invalid sentiment retains a valid article but never supplies an aggregate
+    score. Match score is an unbounded nonnegative relevance value, not a percentage.
+    """
+    if not _finite_nonnegative(min_match_score):
+        raise ValueError("Invalid minimum relevance")
     if not isinstance(item, dict):
+        _record(diagnostics, "STRUCTURE_ERROR")
         return None
+    faults = set()
     title, url = clean_text(item.get("title"), token), public_article_url(item.get("url"), token)
+    if not title:
+        faults.add("TITLE_INVALID")
+    if not url:
+        faults.add("URL_INVALID")
     try:
         published = utc(item.get("published_at"))
-    except (ValueError, TypeError, AttributeError):
-        return None
-    if not title or not url or not cutoff - timedelta(hours=24) < published <= cutoff:
-        return None
+        if published > cutoff:
+            faults.add("DATE_FUTURE")
+        elif published <= cutoff - timedelta(hours=24):
+            faults.add("DATE_EXPIRED_24H")
+    except (ValueError, TypeError, AttributeError, OverflowError):
+        published = None
+        faults.add("DATE_INVALID")
     entities = item.get("entities")
     if not isinstance(entities, list):
+        _record(diagnostics, *faults, "STRUCTURE_ERROR")
         return None
-    def is_bitcoin(entity):
+    candidates = []
+    for entity in entities:
         if not isinstance(entity, dict):
-            return False
+            faults.add("STRUCTURE_ERROR")
+            continue
         name = (clean_text(entity.get("name"), token, 120) or "").casefold()
         legacy = entity.get("symbol") == "CC:BTC" and name == "bitcoin"
         documented = (entity.get("symbol") == "BTCUSD" and entity.get("exchange") == "CC"
                       and entity.get("type") == "cryptocurrency" and name in {"bitcoin", "bitcoin usd"})
-        if not (legacy or documented):
-            return False
+        if legacy or documented:
+            candidates.append(entity)
+    if not candidates:
+        supported_symbol = any(isinstance(e, dict) and e.get("symbol") in {"BTCUSD", "CC:BTC"} for e in entities)
+        faults.add("BITCOIN_ENTITY_UNRECOGNIZED" if supported_symbol or not entities else "SYMBOL_INCORRECT")
+    bitcoin, relevance_faults = [], set()
+    for entity in candidates:
         match = entity.get("match_score")
-        return min_match_score == 0 or (type(match) in {int, float}
-            and math.isfinite(match) and min_match_score <= match <= 100)
-    bitcoin = [e for e in entities if is_bitcoin(e)]
-    if not bitcoin:
+        if match is None:
+            if min_match_score == 0:
+                bitcoin.append(entity)
+            else:
+                relevance_faults.add("RELEVANCE_MISSING")
+        elif not _finite_nonnegative(match):
+            relevance_faults.add("RELEVANCE_INVALID")
+        elif match < min_match_score:
+            relevance_faults.add("RELEVANCE_INSUFFICIENT")
+        else:
+            bitcoin.append(entity)
+    if candidates and not bitcoin:
+        faults.update(relevance_faults)
+    if faults:
+        _record(diagnostics, *faults)
         return None
-    values = []
-    invalid = False
+    values, invalid = [], False
     for entity in bitcoin:
         value = entity.get("sentiment_score")
         if value is None:
@@ -156,6 +206,8 @@ def normalize_marketaux_article(item: object, cutoff: datetime, token: str = "",
         else:
             invalid = True
     status = "AMBIGUOUS" if len(set(values)) > 1 else "INVALID" if invalid else "VALID" if values else "MISSING"
+    if status != "VALID":
+        _record(diagnostics, "SENTIMENT_" + status)
     identifier = None
     try:
         raw = item.get("uuid")
@@ -169,8 +221,7 @@ def normalize_marketaux_article(item: object, cutoff: datetime, token: str = "",
                        public_url=url, published_at=published,
                        bitcoin_symbol="BTCUSD" if any(e.get("symbol") == "BTCUSD" for e in bitcoin) else "CC:BTC",
                        match_score=max((e["match_score"] for e in bitcoin
-                                        if type(e.get("match_score")) in {int,float}
-                                        and math.isfinite(e["match_score"]) and 0 <= e["match_score"] <= 100), default=None),
+                                        if _finite_nonnegative(e.get("match_score"))), default=None),
                        sentiment_score=values[0] if status == "VALID" else None, sentiment_status=status)
 
 
@@ -202,11 +253,14 @@ def suppress_http_details():
 class MarketauxNewsClient:
     def __init__(self, token: str, *, transport: httpx.BaseTransport | None = None,
                  min_match_score: float = 0, allow_empty_filtered: bool = False):
+        if not _finite_nonnegative(min_match_score):
+            raise ValueError("Invalid minimum relevance")
         self._token, self._transport = token, transport
         self.min_match_score, self.allow_empty_filtered = min_match_score, allow_empty_filtered
         self.diagnostics = {}
 
     def fetch(self, now: datetime, *, timeout_seconds: float) -> list[NewsArticle]:
+        self.diagnostics = {"reason_counts": {}}
         if not self._token:
             raise MarketauxUnavailable("NOT_CONFIGURED")
         cutoff = utc(now)
@@ -234,14 +288,16 @@ class MarketauxNewsClient:
                                 raise MarketauxUnavailable("INVALID_RESPONSE")
                         body = json.loads(raw)
             if not isinstance(body, dict) or not isinstance(body.get("data"), list) or "error" in body or len(body["data"]) > 3:
+                _record(self.diagnostics, "STRUCTURE_ERROR")
                 raise MarketauxUnavailable("INVALID_RESPONSE")
             meta = body.get("meta")
             if (not isinstance(meta, dict) or type(meta.get("returned")) is not int
                     or type(meta.get("found")) is not int or meta["returned"] != len(body["data"])
                     or meta["found"] < meta["returned"]):
+                _record(self.diagnostics, "STRUCTURE_ERROR")
                 raise MarketauxUnavailable("INVALID_RESPONSE")
             normalized = [normalize_marketaux_article(item, cutoff, self._token,
-                          min_match_score=self.min_match_score) for item in body["data"]]
+                          min_match_score=self.min_match_score, diagnostics=self.diagnostics) for item in body["data"]]
             # Exact snapshot membership: do not merge old cached article rows.
             articles, ids, urls = [], set(), set()
             for article in normalized:
@@ -249,8 +305,15 @@ class MarketauxNewsClient:
                     articles.append(article)
                     ids.add(article.article_identifier)
                     urls.add(article.public_url)
+                elif article:
+                    _record(self.diagnostics, "ARTICLE_DUPLICATE")
             self.diagnostics.update(provider_returned=len(body["data"]), normalized_articles=len(articles),
-                                    provider_found=meta["found"], entity_symbol="BTCUSD", entity_exchange="CC")
+                                    provider_found=meta["found"], entity_symbol="BTCUSD", entity_exchange="CC",
+                                    rejected_articles=sum(article is None for article in normalized),
+                                    accepted_within_24h=len(articles),
+                                    recent_within_1h=sum((cutoff-a.published_at).total_seconds() <= 3600 for a in articles),
+                                    historical_1_to_24h=sum((cutoff-a.published_at).total_seconds() > 3600 for a in articles),
+                                    accepted_without_sentiment=sum(a.sentiment_score is None for a in articles))
             if body["data"] and not articles and not self.allow_empty_filtered:
                 raise MarketauxUnavailable("INVALID_RESPONSE")
             return articles
@@ -259,4 +322,5 @@ class MarketauxNewsClient:
         except httpx.HTTPError:
             raise MarketauxUnavailable("PROVIDER_UNAVAILABLE") from None
         except (ValueError, TypeError, RecursionError):
+            _record(self.diagnostics, "STRUCTURE_ERROR")
             raise MarketauxUnavailable("INVALID_RESPONSE") from None

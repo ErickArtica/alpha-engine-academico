@@ -8,7 +8,7 @@ x-storage-env: &storage-env
   INTERVAL: 1m
   MODEL_PATH: models/xgboost_v1.joblib
   MODEL_CONFIDENCE_THRESHOLD: "0.60"
-  BINANCE_BASE_URL: https://api.binance.com
+  BINANCE_BASE_URL: ${BINANCE_BASE_URL:-https://api.binance.com}
 
 services:
   postgres:
@@ -52,11 +52,12 @@ services:
       ALPHA_VANTAGE_API_KEY: ${ALPHA_VANTAGE_API_KEY:-}
       LLM_PROVIDER: ${LLM_PROVIDER:-nvidia}
       NVIDIA_API_KEY: ${NVIDIA_API_KEY:-}
-      NVIDIA_MODEL: ${NVIDIA_MODEL:-google/gemma-4-31b-it}
+      NVIDIA_MODEL: ${NVIDIA_MODEL:-meta/muse-glimmer-30b}
+      NVIDIA_REASONING_EFFORT: ${NVIDIA_REASONING_EFFORT:-low}
       NVIDIA_BASE_URL: ${NVIDIA_BASE_URL:-https://integrate.api.nvidia.com/v1}
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
     ports:
-      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:${LOCAL_API_PORT:-8000}:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -113,7 +114,7 @@ services:
       RECOMMENDATION_API_AUTH_SCHEME: bearer
       LOCAL_DEMO_MODE: ${LOCAL_DEMO_MODE:-true}
     ports:
-      - "127.0.0.1:8501:8501"
+      - "127.0.0.1:${LOCAL_STREAMLIT_PORT:-8501}:8501"
     depends_on:
       bootstrap:
         condition: service_completed_successfully

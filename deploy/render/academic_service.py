@@ -261,7 +261,7 @@ class AcademicService:
         ticket = quotas.reserve("news", claims["sub"], claims["sid"], lease=True)
         if not ticket:
             return 429, {"status": "BUDGET_OR_CONCURRENCY_LIMIT"}
-        status = "PROVIDER_FAILED"
+        status, client = "PROVIDER_FAILED", None
         try:
             def claim(state):
                 if state.get("news_next_at", 0) > now:
@@ -284,8 +284,11 @@ class AcademicService:
                 for article in articles[:3]]}
             self.store.update(lambda state: state.update(news_cache=cache))
             status = "REFRESHED"
-            return 200, {"status": status, "news": self._news(cfg)}
+            return 200, {"status": status, "news": self._news(cfg),
+                         "provider_diagnostics": getattr(client, "diagnostics", None)}
         except Exception:
-            return 502, {"status": status, "news": self._news(cfg)}
+            return 502, {"status": status, "news": self._news(cfg),
+                         "provider_diagnostics": getattr(client, "diagnostics", None)}
         finally:
-            quotas.finish("news", ticket, claims["sub"], status)
+            quotas.finish("news", ticket, claims["sub"], status,
+                          diagnostics=getattr(client, "diagnostics", None))

@@ -39,6 +39,24 @@ def audit_publication() -> dict:
         "sql/academic_demo_rollback.sql", "sql/academic_dependencies_inspect.sql")}
     academic_paths.add("tests/test_academic_demo.py")
     academic_paths.update({"alpha_engine/news/marketaux.py", "tests/test_academic_provider_reliability.py"})
+    academic_paths.update({
+        '.env.local.example',
+        '.gitignore',
+        'README.md',
+        'deploy/local/Dockerfile.api.dockerignore',
+        'deploy/local/Dockerfile.streamlit.dockerignore',
+        'docker-compose.yml',
+        'docs/01_INSTALACION_LOCAL.md',
+        'docs/02_DESPLIEGUE_NUBE.md',
+        'docs/03_VARIABLES_Y_CREDENCIALES.md',
+        'docs/04_PRUEBAS_DE_RECONSTRUCCION.md',
+        'scripts/configure_academic_users.py',
+        'scripts/configure_local.py',
+        'scripts/probe_academic_provider.py',
+        'scripts/verify_local.py',
+        'tests/test_marketaux_diagnostics.py',
+        'tests/test_reconstruction_helpers.py',
+    })
     if additional - academic_paths:
         raise ValueError("Unreviewed academic backend publication path")
     proposed |= additional
@@ -63,7 +81,7 @@ def audit_publication() -> dict:
         path = ROOT / name
         if path.is_symlink() or path.resolve() != ROOT.joinpath(*parts):
             raise ValueError("Symlink or path escape in publication set")
-        if (path.name.startswith(".env") or path.name in {"secrets.toml", "config.json"}
+        if ((path.name.startswith(".env") and path.name != ".env.local.example") or path.name in {"secrets.toml", "config.json"}
                 or path.suffix.lower() in {".pem", ".key", ".pfx", ".p12", ".zip", ".parquet"}
                 or any(p in {"validation", "runtime", ".git", ".venv", "__pycache__"} for p in parts)):
             raise ValueError("Private/generated file in publication set: " + name)

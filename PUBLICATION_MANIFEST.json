@@ -11,9 +11,14 @@
       "sha256": "2d780316bea90a5bea5cb4a512dbc6a9a08b5d3c03f260ced0c167607039a856"
     },
     {
+      "path": ".env.local.example",
+      "bytes": 604,
+      "sha256": "12e9b57edce6f15d0d38cfe1248576aa5406d76558572ca6fe8961e02915c889"
+    },
+    {
       "path": ".gitignore",
-      "bytes": 241,
-      "sha256": "2921dd49c489098bb64c46e07eb1df2a365557bb122522431b3b0a70989dfadf"
+      "bytes": 869,
+      "sha256": "09c86538e62e12bf38b8d64c39b306e0987d22e3e91c07c18186119b087497d2"
     },
     {
       "path": "Dockerfile",
@@ -52,8 +57,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 7142,
-      "sha256": "864fdbe94b2eaac93c987376e070ba14aed85ff8e4d06427dbb718750aeeb2d3"
+      "bytes": 7796,
+      "sha256": "e2d2e473ad5440e834585ec9faa9470b00b408857ceb96042ef86ef9ac9e9a82"
     },
     {
       "path": "alpha_engine/__init__.py",
@@ -377,8 +382,8 @@
     },
     {
       "path": "alpha_engine/news/marketaux.py",
-      "bytes": 12592,
-      "sha256": "15fdca609bfbe21902a188f281dfa987e83fac1736a4eac2fb53f97fd68c27b0"
+      "bytes": 15439,
+      "sha256": "99f81a8eeb00db7e90fe80f2ba31fb5a42be46bcd8c72fca96662d29aa67e65d"
     },
     {
       "path": "alpha_engine/observability/__init__.py",
@@ -616,9 +621,19 @@
       "sha256": "1b81bd6e550d57283db58a5cda2cd77c2db95f198a95e41613ce3de3b2293a0e"
     },
     {
+      "path": "deploy/local/Dockerfile.api.dockerignore",
+      "bytes": 339,
+      "sha256": "8b6bfd46d681438d381289dcc8632f31b95d5f59eee65828e72d34226690e9ae"
+    },
+    {
       "path": "deploy/local/Dockerfile.streamlit",
       "bytes": 662,
       "sha256": "66eedbf44259d234ca4b4ab9aab2558f039c9767ab67aeeb58525b99319167a4"
+    },
+    {
+      "path": "deploy/local/Dockerfile.streamlit.dockerignore",
+      "bytes": 332,
+      "sha256": "ed9e8b0b36ff872dfe5e3ccfdda284c601350bf2345eaebe9007b53a06e3cd80"
     },
     {
       "path": "deploy/local/paper.sql",
@@ -632,8 +647,8 @@
     },
     {
       "path": "deploy/northflank/PUBLICATION_MANIFEST.json",
-      "bytes": 2658,
-      "sha256": "044f1869b19776627cabcd6060c87e4069f2f544d8dfbde8b6d022bea23bbe34"
+      "bytes": 3241,
+      "sha256": "0d9de8ce2d76b312a09ad921b06847d1cc35790dbbfd99016c6957323f148600"
     },
     {
       "path": "deploy/northflank/academic_client.py",
@@ -697,8 +712,8 @@
     },
     {
       "path": "deploy/northflank/publication_audit.py",
-      "bytes": 4711,
-      "sha256": "f1d6369a94558bbd9e594a53ebbd26422e6fae2e9f14ed5898ebfb540085bdb2"
+      "bytes": 5433,
+      "sha256": "754bdf802dd5851c3aa864f90df3476193a85813598596ed89b7cb9521a17114"
     },
     {
       "path": "deploy/northflank/requirements.frontend.txt",
@@ -772,8 +787,8 @@
     },
     {
       "path": "deploy/render/academic_service.py",
-      "bytes": 17061,
-      "sha256": "6ff9758bb75e1bba7201d6d8fde8908ca482e3772d0a709fc896df1c70e168ae"
+      "bytes": 17325,
+      "sha256": "f2c97b3c253e8b65b9bc820fcdfd80b0dc8a9245630a5e599affe086cee46c21"
     },
     {
       "path": "deploy/render/academic_state.py",
@@ -827,8 +842,28 @@
     },
     {
       "path": "docker-compose.yml",
-      "bytes": 4450,
-      "sha256": "9e2e01b484438f4829f7fc74ce6d1e3a221823ba0426e930a62a2f5426a8bece"
+      "bytes": 4578,
+      "sha256": "47867ab67c64a4bfa827393a67983f02ee658d26f8ed63798cabb5ebab5e0cf2"
+    },
+    {
+      "path": "docs/01_INSTALACION_LOCAL.md",
+      "bytes": 11153,
+      "sha256": "4aba2ed4803632c5ed8050daa132ac94c54d72a1bb05df5742ce56bf61abeced"
+    },
+    {
+      "path": "docs/02_DESPLIEGUE_NUBE.md",
+      "bytes": 17939,
+      "sha256": "1eef00beba4e2ecaa7444bd7ebbbeedd434eb77be6eb5bd868e31dfe22a00af2"
+    },
+    {
+      "path": "docs/03_VARIABLES_Y_CREDENCIALES.md",
+      "bytes": 15391,
+      "sha256": "5e030e71180d5a97ed90360546aece29942890f29e66e9f7de7d2d52d1dadfda"
+    },
+    {
+      "path": "docs/04_PRUEBAS_DE_RECONSTRUCCION.md",
+      "bytes": 10627,
+      "sha256": "3d4a3078b44e50be97271be11c55907ba309f4140babfdfe718af61d0b2b5dc2"
     },
     {
       "path": "models/baseline_v1.json",
@@ -946,9 +981,19 @@
       "sha256": "4376f910d3543ddc7dcc9107e45335a188e91bec822495ad61575834fc703c88"
     },
     {
+      "path": "scripts/configure_academic_users.py",
+      "bytes": 1372,
+      "sha256": "94671227094adb650fa663cb484ac6772c0a61f682e140f022f853ea8ea552f7"
+    },
+    {
       "path": "scripts/configure_influxdb3.py",
       "bytes": 2310,
       "sha256": "e71a45408ad30401948509b83eadde3463f83998166d4d31bf4f846de8540739"
+    },
+    {
+      "path": "scripts/configure_local.py",
+      "bytes": 1833,
+      "sha256": "2070df594ea5c2f05898fdecc127c0fe5d85394cfb1964b320aaf42b6db8d6e5"
     },
     {
       "path": "scripts/download_binance_btcusdt_1m.py",
@@ -1009,6 +1054,11 @@
       "path": "scripts/prepare_xgboost_v3_12m.py",
       "bytes": 8986,
       "sha256": "3fd0dd659d6675bcae2c9d54534fa84fb2de415d1cbfb0b6f67550ba55ead222"
+    },
+    {
+      "path": "scripts/probe_academic_provider.py",
+      "bytes": 3650,
+      "sha256": "a92907736d58368fa4ccfbd0e69be534c3c9c852dc26c8d06b2100c234776154"
     },
     {
       "path": "scripts/run_hold_target_experiment.py",
@@ -1074,6 +1124,11 @@
       "path": "scripts/train_compare_xgboost_v3.py",
       "bytes": 17005,
       "sha256": "a14d18736adc03e3961e11ef4a5ba217a6f460ed3559579a5e03b8294f4b893b"
+    },
+    {
+      "path": "scripts/verify_local.py",
+      "bytes": 4100,
+      "sha256": "121e9a25bce6005a18ffa413cb370d4d282ebc62066084a7def2b0820e9d0fed"
     },
     {
       "path": "streamlit_app/Home.py",
@@ -1321,6 +1376,11 @@
       "sha256": "ff677f5c005002bfd98afb5ec220d0db99422ac6b6e9d2f0e86e03d07b21e47c"
     },
     {
+      "path": "tests/test_marketaux_diagnostics.py",
+      "bytes": 7922,
+      "sha256": "91606b0b6fa4d8ebe8919be15d4f0dd9e6b7f0a5fc83a598006b6d3786eabe95"
+    },
+    {
       "path": "tests/test_marketaux_disabled_release.py",
       "bytes": 11931,
       "sha256": "ab766518785560cc3b9564d77d8938c775aa23c7abd12fc16cd49f39e810d797"
@@ -1431,6 +1491,11 @@
       "sha256": "279768d638a80b7b3af7b0d48650071fa972121cec22d16a78cf6f43990dea67"
     },
     {
+      "path": "tests/test_reconstruction_helpers.py",
+      "bytes": 3292,
+      "sha256": "b18da604ab359a2601c3479f852a722e1f222b7baca07502f1d6ac9fa6961a49"
+    },
+    {
       "path": "tests/test_render_adapter.py",
       "bytes": 7896,
       "sha256": "980713ecca22a627dd26d90715f10b3f8feda91f0b671e00813742e14e052536"
@@ -1531,5 +1596,6 @@
       "sha256": "9cec651459f8f5d853489031ae63b8190855d203bf8cdb7b991ceec9fc21ae95"
     }
   ],
-  "history": "Clean academic export; subsequent reviewed source-only commits; no original Git history"
+  "history": "Clean academic export; subsequent reviewed source-only commits; no original Git history",
+  "source_notes": "Reviewed academic export; original private history excluded. Marketaux fix prepared, not deployed or enabled in production."
 }
