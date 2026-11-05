@@ -7,6 +7,8 @@
 3. [Variables y credenciales](docs/03_VARIABLES_Y_CREDENCIALES.md)
 4. [Pruebas de reconstrucción](docs/04_PRUEBAS_DE_RECONSTRUCCION.md)
 
+**Reconstrucción local independiente PASS (05/11/2026):** clon público sin parches, PostgreSQL vacío, bootstrap y scheduler reales, seis páginas y 122 pruebas offline. [Registro y SHA probado](docs/04_PRUEBAS_DE_RECONSTRUCCION.md#ejecución-independiente-registrada-5-de-noviembre-de-2026). No equivale a reconstruir el historial privado ni a desplegar cloud.
+
 La corrección Marketaux permite relevancia superior a 100 y añade diagnósticos de descarte. Está preparada y probada en fuentes/local; no se ha desplegado ni activado Marketaux en Render. Noticias siguen apagadas por derechos pendientes. Compose usa `.env.local.example` y secretos propios; no depende de Supabase ni Render. El perfil local y el cloud son distintos.
 
 

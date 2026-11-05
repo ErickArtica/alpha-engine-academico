@@ -134,3 +134,20 @@ docker compose --project-name alpha-profesor --env-file .env down --volumes --re
 ```
 
 No declare reconstrucción completa con un build solamente: debe haber base vacía inicial, bootstrap con datos propios, inferencia V1, evaluación, scheduler, seis páginas y simulación comprobadas. La reconstrucción cloud/proveedores reales se declara por separado de este PASS local.
+
+## Ejecución independiente registrada: 5 de noviembre de 2026
+
+Código probado: `095534162b3738b60bccbdb1f9973137965e043b`. Se clonó anónimamente el repositorio público en otra carpeta temporal, sin overlays, con secretos nuevos, configuración Docker sin credenciales de registro, build `--no-cache` y volumen PostgreSQL nuevo. No se copiaron configuraciones Supabase/Render ni datos de otra instalación.
+
+| Comprobación ejecutada | Evidencia observada |
+|---|---|
+| PostgreSQL y bootstrap Binance | 360 velas, 241 predicciones y 240 evaluaciones locales |
+| Scheduler real local | Después de un ciclo: 361 velas, 242 predicciones, 241 evaluaciones y una ejecución registrada |
+| Modelo | Checksum V1 correcto, ocho features y gate 0.60 |
+| Salud | API 200; Streamlit 200; disparador anónimo 401 |
+| Offline | 86 tests backend/noticias/helpers + 36 frontend = **122 PASS**; proveedores simulados, red deshabilitada |
+| Navegador real | Seis pantallas, gráficos, avance de replay, sin excepciones ni HTTP 500 observados |
+| WebSocket | Conexión estable durante 35 segundos |
+| Proveedores reales durante reconstrucción | NVIDIA: 0; Marketaux: 0 |
+
+El registro demuestra reconstrucción funcional **local** del código indicado. No demuestra aprovisionamiento de un Supabase/Render nuevo, entrenamiento desde el dataset original ni una nueva prueba LIVE de proveedores. Las advertencias NumPy/Streamlit observadas no hicieron fallar las pruebas. No es una promesa de builds binariamente idénticos en el futuro: registre versiones/digests si necesita congelar dependencias; las librerías auxiliares e imágenes base tienen rangos de actualización.
