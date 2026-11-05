@@ -1,0 +1,19 @@
+FROM python:3.12.14-slim-bookworm
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONPATH=/app \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 APP_ENV=academic_demo STORAGE_PROVIDER=supabase \
+    ACADEMIC_DEMO_ENABLED=false ACADEMIC_DEMO_LLM_ENABLED=false \
+    ACADEMIC_DEMO_NEWS_ENABLED=false ACADEMIC_DEMO_NEWS_RIGHTS_APPROVED=false \
+    LOCAL_DEMO_MODE=false PRESCRIPTIVE_NEWS_ENABLED=false \
+    OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 HOME=/tmp
+RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY deploy/render/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+COPY alpha_engine /app/alpha_engine
+COPY deploy/render /app/deploy/render
+COPY models /app/models
+LABEL org.opencontainers.image.source="https://github.com/ErickArtica/alpha-engine-academico" \
+      org.opencontainers.image.revision="7a9a8a33d7c5e0169760db1cab4cea1e7e69a351"
+USER 10001:10001
+EXPOSE 10000
+CMD ["sh","-c","exec uvicorn deploy.render.academic_only:app --host 0.0.0.0 --port ${PORT:-10000} --workers 1"]

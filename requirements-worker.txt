@@ -1,0 +1,11 @@
+# Azure Functions staged package; no Streamlit or local scheduler.
+azure-functions>=1.21,<2
+pydantic>=2.8,<3
+pydantic-settings>=2.4,<3
+httpx>=0.27,<1
+pandas>=2.2,<3
+numpy>=2.0,<3
+scikit-learn==1.9.1
+xgboost==3.4.1
+joblib==1.6.0
+supabase>=2.31,<3

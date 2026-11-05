@@ -1,0 +1,130 @@
+name: alpha-engine-local
+
+x-storage-env: &storage-env
+  APP_ENV: local
+  STORAGE_PROVIDER: postgresql
+  DATABASE_URL: postgresql://alpha_engine:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/alpha_engine
+  SYMBOL: BTCUSDT
+  INTERVAL: 1m
+  MODEL_PATH: models/xgboost_v1.joblib
+  MODEL_CONFIDENCE_THRESHOLD: "0.60"
+  BINANCE_BASE_URL: https://api.binance.com
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: alpha_engine
+      POSTGRES_USER: alpha_engine
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - alpha_pg_data:/var/lib/postgresql/data
+      - ./deploy/local/schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U alpha_engine -d alpha_engine && psql -U alpha_engine -d alpha_engine -tAc \"SELECT to_regclass('public.predictions') IS NOT NULL\" | grep -qx t"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  paper_migrate:
+    image: postgres:16-alpine
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - ./deploy/local/paper.sql:/migrations/paper.sql:ro
+    command: ["psql", "-h", "postgres", "-U", "alpha_engine", "-d", "alpha_engine", "-v", "ON_ERROR_STOP=1", "-f", "/migrations/paper.sql"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    build:
+      context: .
+      dockerfile: deploy/local/Dockerfile.api
+    environment:
+      <<: *storage-env
+      INTERNAL_CRON_SECRET: ${INTERNAL_CRON_SECRET:?Set INTERNAL_CRON_SECRET in .env}
+      RECOMMENDATION_API_SECRET: ${RECOMMENDATION_API_SECRET:?Set RECOMMENDATION_API_SECRET in .env}
+      LOCAL_DEMO_MODE: ${LOCAL_DEMO_MODE:-true}
+      PRESCRIPTIVE_NEWS_ENABLED: ${PRESCRIPTIVE_NEWS_ENABLED:-false}
+      ALPHA_VANTAGE_API_KEY: ${ALPHA_VANTAGE_API_KEY:-}
+      LLM_PROVIDER: ${LLM_PROVIDER:-nvidia}
+      NVIDIA_API_KEY: ${NVIDIA_API_KEY:-}
+      NVIDIA_MODEL: ${NVIDIA_MODEL:-google/gemma-4-31b-it}
+      NVIDIA_BASE_URL: ${NVIDIA_BASE_URL:-https://integrate.api.nvidia.com/v1}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      paper_migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  bootstrap:
+    build:
+      context: .
+      dockerfile: deploy/local/Dockerfile.api
+    command: ["python", "-m", "alpha_engine.jobs.local_bootstrap"]
+    environment:
+      <<: *storage-env
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: "no"
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: deploy/local/Dockerfile.api
+    command: ["python", "-m", "alpha_engine.jobs.local_scheduler"]
+    environment:
+      INTERNAL_CRON_SECRET: ${INTERNAL_CRON_SECRET:?Set INTERNAL_CRON_SECRET in .env}
+      LOCAL_API_URL: http://api:8000
+    depends_on:
+      bootstrap:
+        condition: service_completed_successfully
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os,time; p='/tmp/alpha_scheduler_heartbeat'; assert os.path.exists(p) and time.time()-os.path.getmtime(p)<180"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: deploy/local/Dockerfile.streamlit
+    environment:
+      <<: *storage-env
+      PRESCRIPTIVE_BACKEND: http
+      RECOMMENDATION_API_URL: http://api:8000/api/recommendation
+      RECOMMENDATION_API_KEY: ${RECOMMENDATION_API_SECRET:?Set RECOMMENDATION_API_SECRET in .env}
+      RECOMMENDATION_API_AUTH_SCHEME: bearer
+      LOCAL_DEMO_MODE: ${LOCAL_DEMO_MODE:-true}
+    ports:
+      - "127.0.0.1:8501:8501"
+    depends_on:
+      bootstrap:
+        condition: service_completed_successfully
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+volumes:
+  alpha_pg_data:

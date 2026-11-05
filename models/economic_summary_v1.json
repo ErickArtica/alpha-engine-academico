@@ -1,0 +1,1971 @@
+{
+  "check_version": "economic_check_v1",
+  "source_report_version": "walk_forward_v1",
+  "source_input_sha256": "b5138e394357b6a55133a730a402f03653c9b4046ddf630f9cb497ed2760904b",
+  "source_test_rows": 10795,
+  "symbol": "BTCUSDT",
+  "observed_data": "OHLCV de velas cerradas y señales XGBoost seleccionadas en VALIDATION; no incluye decisiones del LLM ni guardrails de riesgo",
+  "assumptions": {
+    "decision_time": "close_time de vela t + latencia simulada",
+    "first_available_entry": "open de la vela t+1 sólo si ocurre estrictamente después de generar la señal; sin cotización intraminuto posterior disponible",
+    "exit": "close de vela t+1, proxy optimista de venta al cierre; no demuestra fill real",
+    "spot_inventory": "capital inicial en efectivo; BUY entra y sale al horizonte de 1 minuto; SELL sin activo previo no abre corto",
+    "position_size": "cada BUY ejecutable invierte el 100 % del capital de referencia y se liquida antes de la siguiente decisión; retornos compuestos sobre operaciones, sin financiación",
+    "drawdown": "máxima caída de capital neto observada sólo tras cerrar cada operación; no mide pérdidas intraminuto",
+    "costs": "spread, comisión y deslizamiento son bps estimados, no cotizaciones ni tarifas históricas observadas",
+    "latency": "segundos fijos supuestos; no son mediciones del pipeline, LLM o interfaz"
+  },
+  "runs": [
+    {
+      "cost_scenario": "zero_cost",
+      "costs": {
+        "fee_bps_each_side": 0,
+        "spread_bps_total": 0,
+        "slippage_bps_each_side": 0
+      },
+      "latency_seconds_assumed": 0,
+      "total": {
+        "tested_rows": 10795,
+        "signals": {
+          "BUY": 1494,
+          "SELL": 6228,
+          "HOLD": 3073
+        },
+        "signal_coverage": 0.7153311718388142,
+        "signal_before_expiry": 7722,
+        "signal_before_expiry_fraction": 1.0,
+        "executed_buy_trades": 1494,
+        "trade_coverage": 0.13839740620657712,
+        "sell_without_initial_inventory": 6228,
+        "buy_without_observed_quote_after_generation": 0,
+        "expired_buy": 0,
+        "gross_compounded_return": 0.0439707087916017,
+        "net_compounded_return_estimated": 0.0439707087916017,
+        "max_drawdown_net_estimated": 0.013500021630470371,
+        "average_gross_return_bps": 0.2901858074008099,
+        "average_net_return_bps_estimated": 0.2901858074008099,
+        "average_cost_drag_bps_estimated": 0.0,
+        "net_win_fraction_estimated": 0.5180722891566265
+      },
+      "windows": [
+        {
+          "window": 1,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 3,
+            "SELL": 2340,
+            "HOLD": 354
+          },
+          "signal_coverage": 0.8687430478309233,
+          "signal_before_expiry": 2343,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 3,
+          "trade_coverage": 0.0011123470522803114,
+          "sell_without_initial_inventory": 2340,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0027917077078409847,
+          "net_compounded_return_estimated": 0.0027917077078409847,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": 9.297212588856851,
+          "average_net_return_bps_estimated": 9.297212588856851,
+          "average_cost_drag_bps_estimated": 0.0,
+          "net_win_fraction_estimated": 1.0
+        },
+        {
+          "window": 2,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 814,
+            "SELL": 1883,
+            "HOLD": 0
+          },
+          "signal_coverage": 1.0,
+          "signal_before_expiry": 2697,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 814,
+          "trade_coverage": 0.3018168335187245,
+          "sell_without_initial_inventory": 1883,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.017767749166295532,
+          "net_compounded_return_estimated": 0.017767749166295532,
+          "max_drawdown_net_estimated": 0.01350002163046915,
+          "average_gross_return_bps": 0.21790082653619514,
+          "average_net_return_bps_estimated": 0.21790082653619514,
+          "average_cost_drag_bps_estimated": 0.0,
+          "net_win_fraction_estimated": 0.5184275184275184
+        },
+        {
+          "window": 3,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 88,
+            "SELL": 1773,
+            "HOLD": 836
+          },
+          "signal_coverage": 0.6900259547645532,
+          "signal_before_expiry": 1861,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 88,
+          "trade_coverage": 0.03262884686688913,
+          "sell_without_initial_inventory": 1773,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 0,
+          "gross_compounded_return": -0.004195793330234232,
+          "net_compounded_return_estimated": -0.004195793330234232,
+          "max_drawdown_net_estimated": 0.008310792023024538,
+          "average_gross_return_bps": -0.47631411830528014,
+          "average_net_return_bps_estimated": -0.47631411830528014,
+          "average_cost_drag_bps_estimated": 0.0,
+          "net_win_fraction_estimated": 0.48863636363636365
+        },
+        {
+          "window": 4,
+          "tested_rows": 2704,
+          "signals": {
+            "BUY": 589,
+            "SELL": 232,
+            "HOLD": 1883
+          },
+          "signal_coverage": 0.3036242603550296,
+          "signal_before_expiry": 821,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 589,
+          "trade_coverage": 0.21782544378698224,
+          "sell_without_initial_inventory": 232,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.02719982823128153,
+          "net_compounded_return_estimated": 0.02719982823128153,
+          "max_drawdown_net_estimated": 0.010031000510790977,
+          "average_gross_return_bps": 0.45872721239497666,
+          "average_net_return_bps_estimated": 0.45872721239497666,
+          "average_cost_drag_bps_estimated": 0.0,
+          "net_win_fraction_estimated": 0.5195246179966044
+        }
+      ]
+    },
+    {
+      "cost_scenario": "zero_cost",
+      "costs": {
+        "fee_bps_each_side": 0,
+        "spread_bps_total": 0,
+        "slippage_bps_each_side": 0
+      },
+      "latency_seconds_assumed": 1,
+      "total": {
+        "tested_rows": 10795,
+        "signals": {
+          "BUY": 1494,
+          "SELL": 6228,
+          "HOLD": 3073
+        },
+        "signal_coverage": 0.7153311718388142,
+        "signal_before_expiry": 7722,
+        "signal_before_expiry_fraction": 1.0,
+        "executed_buy_trades": 0,
+        "trade_coverage": 0.0,
+        "sell_without_initial_inventory": 6228,
+        "buy_without_observed_quote_after_generation": 1494,
+        "expired_buy": 0,
+        "gross_compounded_return": 0.0,
+        "net_compounded_return_estimated": 0.0,
+        "max_drawdown_net_estimated": 0.0,
+        "average_gross_return_bps": null,
+        "average_net_return_bps_estimated": null,
+        "average_cost_drag_bps_estimated": null,
+        "net_win_fraction_estimated": null
+      },
+      "windows": [
+        {
+          "window": 1,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 3,
+            "SELL": 2340,
+            "HOLD": 354
+          },
+          "signal_coverage": 0.8687430478309233,
+          "signal_before_expiry": 2343,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 2340,
+          "buy_without_observed_quote_after_generation": 3,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 2,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 814,
+            "SELL": 1883,
+            "HOLD": 0
+          },
+          "signal_coverage": 1.0,
+          "signal_before_expiry": 2697,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1883,
+          "buy_without_observed_quote_after_generation": 814,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 3,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 88,
+            "SELL": 1773,
+            "HOLD": 836
+          },
+          "signal_coverage": 0.6900259547645532,
+          "signal_before_expiry": 1861,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1773,
+          "buy_without_observed_quote_after_generation": 88,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 4,
+          "tested_rows": 2704,
+          "signals": {
+            "BUY": 589,
+            "SELL": 232,
+            "HOLD": 1883
+          },
+          "signal_coverage": 0.3036242603550296,
+          "signal_before_expiry": 821,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 232,
+          "buy_without_observed_quote_after_generation": 589,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        }
+      ]
+    },
+    {
+      "cost_scenario": "zero_cost",
+      "costs": {
+        "fee_bps_each_side": 0,
+        "spread_bps_total": 0,
+        "slippage_bps_each_side": 0
+      },
+      "latency_seconds_assumed": 5,
+      "total": {
+        "tested_rows": 10795,
+        "signals": {
+          "BUY": 1494,
+          "SELL": 6228,
+          "HOLD": 3073
+        },
+        "signal_coverage": 0.7153311718388142,
+        "signal_before_expiry": 7722,
+        "signal_before_expiry_fraction": 1.0,
+        "executed_buy_trades": 0,
+        "trade_coverage": 0.0,
+        "sell_without_initial_inventory": 6228,
+        "buy_without_observed_quote_after_generation": 1494,
+        "expired_buy": 0,
+        "gross_compounded_return": 0.0,
+        "net_compounded_return_estimated": 0.0,
+        "max_drawdown_net_estimated": 0.0,
+        "average_gross_return_bps": null,
+        "average_net_return_bps_estimated": null,
+        "average_cost_drag_bps_estimated": null,
+        "net_win_fraction_estimated": null
+      },
+      "windows": [
+        {
+          "window": 1,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 3,
+            "SELL": 2340,
+            "HOLD": 354
+          },
+          "signal_coverage": 0.8687430478309233,
+          "signal_before_expiry": 2343,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 2340,
+          "buy_without_observed_quote_after_generation": 3,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 2,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 814,
+            "SELL": 1883,
+            "HOLD": 0
+          },
+          "signal_coverage": 1.0,
+          "signal_before_expiry": 2697,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1883,
+          "buy_without_observed_quote_after_generation": 814,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 3,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 88,
+            "SELL": 1773,
+            "HOLD": 836
+          },
+          "signal_coverage": 0.6900259547645532,
+          "signal_before_expiry": 1861,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1773,
+          "buy_without_observed_quote_after_generation": 88,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 4,
+          "tested_rows": 2704,
+          "signals": {
+            "BUY": 589,
+            "SELL": 232,
+            "HOLD": 1883
+          },
+          "signal_coverage": 0.3036242603550296,
+          "signal_before_expiry": 821,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 232,
+          "buy_without_observed_quote_after_generation": 589,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        }
+      ]
+    },
+    {
+      "cost_scenario": "zero_cost",
+      "costs": {
+        "fee_bps_each_side": 0,
+        "spread_bps_total": 0,
+        "slippage_bps_each_side": 0
+      },
+      "latency_seconds_assumed": 30,
+      "total": {
+        "tested_rows": 10795,
+        "signals": {
+          "BUY": 1494,
+          "SELL": 6228,
+          "HOLD": 3073
+        },
+        "signal_coverage": 0.7153311718388142,
+        "signal_before_expiry": 7722,
+        "signal_before_expiry_fraction": 1.0,
+        "executed_buy_trades": 0,
+        "trade_coverage": 0.0,
+        "sell_without_initial_inventory": 6228,
+        "buy_without_observed_quote_after_generation": 1494,
+        "expired_buy": 0,
+        "gross_compounded_return": 0.0,
+        "net_compounded_return_estimated": 0.0,
+        "max_drawdown_net_estimated": 0.0,
+        "average_gross_return_bps": null,
+        "average_net_return_bps_estimated": null,
+        "average_cost_drag_bps_estimated": null,
+        "net_win_fraction_estimated": null
+      },
+      "windows": [
+        {
+          "window": 1,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 3,
+            "SELL": 2340,
+            "HOLD": 354
+          },
+          "signal_coverage": 0.8687430478309233,
+          "signal_before_expiry": 2343,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 2340,
+          "buy_without_observed_quote_after_generation": 3,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 2,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 814,
+            "SELL": 1883,
+            "HOLD": 0
+          },
+          "signal_coverage": 1.0,
+          "signal_before_expiry": 2697,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1883,
+          "buy_without_observed_quote_after_generation": 814,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 3,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 88,
+            "SELL": 1773,
+            "HOLD": 836
+          },
+          "signal_coverage": 0.6900259547645532,
+          "signal_before_expiry": 1861,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1773,
+          "buy_without_observed_quote_after_generation": 88,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 4,
+          "tested_rows": 2704,
+          "signals": {
+            "BUY": 589,
+            "SELL": 232,
+            "HOLD": 1883
+          },
+          "signal_coverage": 0.3036242603550296,
+          "signal_before_expiry": 821,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 232,
+          "buy_without_observed_quote_after_generation": 589,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        }
+      ]
+    },
+    {
+      "cost_scenario": "zero_cost",
+      "costs": {
+        "fee_bps_each_side": 0,
+        "spread_bps_total": 0,
+        "slippage_bps_each_side": 0
+      },
+      "latency_seconds_assumed": 60,
+      "total": {
+        "tested_rows": 10795,
+        "signals": {
+          "BUY": 1494,
+          "SELL": 6228,
+          "HOLD": 3073
+        },
+        "signal_coverage": 0.7153311718388142,
+        "signal_before_expiry": 0,
+        "signal_before_expiry_fraction": 0.0,
+        "executed_buy_trades": 0,
+        "trade_coverage": 0.0,
+        "sell_without_initial_inventory": 6228,
+        "buy_without_observed_quote_after_generation": 0,
+        "expired_buy": 1494,
+        "gross_compounded_return": 0.0,
+        "net_compounded_return_estimated": 0.0,
+        "max_drawdown_net_estimated": 0.0,
+        "average_gross_return_bps": null,
+        "average_net_return_bps_estimated": null,
+        "average_cost_drag_bps_estimated": null,
+        "net_win_fraction_estimated": null
+      },
+      "windows": [
+        {
+          "window": 1,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 3,
+            "SELL": 2340,
+            "HOLD": 354
+          },
+          "signal_coverage": 0.8687430478309233,
+          "signal_before_expiry": 0,
+          "signal_before_expiry_fraction": 0.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 2340,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 3,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 2,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 814,
+            "SELL": 1883,
+            "HOLD": 0
+          },
+          "signal_coverage": 1.0,
+          "signal_before_expiry": 0,
+          "signal_before_expiry_fraction": 0.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1883,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 814,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 3,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 88,
+            "SELL": 1773,
+            "HOLD": 836
+          },
+          "signal_coverage": 0.6900259547645532,
+          "signal_before_expiry": 0,
+          "signal_before_expiry_fraction": 0.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1773,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 88,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 4,
+          "tested_rows": 2704,
+          "signals": {
+            "BUY": 589,
+            "SELL": 232,
+            "HOLD": 1883
+          },
+          "signal_coverage": 0.3036242603550296,
+          "signal_before_expiry": 0,
+          "signal_before_expiry_fraction": 0.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 232,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 589,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        }
+      ]
+    },
+    {
+      "cost_scenario": "base_estimate",
+      "costs": {
+        "fee_bps_each_side": 10.0,
+        "spread_bps_total": 2.0,
+        "slippage_bps_each_side": 1.0
+      },
+      "latency_seconds_assumed": 0,
+      "total": {
+        "tested_rows": 10795,
+        "signals": {
+          "BUY": 1494,
+          "SELL": 6228,
+          "HOLD": 3073
+        },
+        "signal_coverage": 0.7153311718388142,
+        "signal_before_expiry": 7722,
+        "signal_before_expiry_fraction": 1.0,
+        "executed_buy_trades": 1494,
+        "trade_coverage": 0.13839740620657712,
+        "sell_without_initial_inventory": 6228,
+        "buy_without_observed_quote_after_generation": 0,
+        "expired_buy": 0,
+        "gross_compounded_return": 0.0439707087916017,
+        "net_compounded_return_estimated": -0.9711043314529642,
+        "max_drawdown_net_estimated": 0.9711043314529642,
+        "average_gross_return_bps": 0.2901858074008099,
+        "average_net_return_bps_estimated": -23.691715852002254,
+        "average_cost_drag_bps_estimated": 23.981901659403075,
+        "net_win_fraction_estimated": 0.006024096385542169
+      },
+      "windows": [
+        {
+          "window": 1,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 3,
+            "SELL": 2340,
+            "HOLD": 354
+          },
+          "signal_coverage": 0.8687430478309233,
+          "signal_before_expiry": 2343,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 3,
+          "trade_coverage": 0.0011123470522803114,
+          "sell_without_initial_inventory": 2340,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0027917077078409847,
+          "net_compounded_return_estimated": -0.004405451292878171,
+          "max_drawdown_net_estimated": 0.004405451292878171,
+          "average_gross_return_bps": 9.297212588856851,
+          "average_net_return_bps_estimated": -14.706289006799118,
+          "average_cost_drag_bps_estimated": 24.003501595655973,
+          "net_win_fraction_estimated": 0.0
+        },
+        {
+          "window": 2,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 814,
+            "SELL": 1883,
+            "HOLD": 0
+          },
+          "signal_coverage": 1.0,
+          "signal_before_expiry": 2697,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 814,
+          "trade_coverage": 0.3018168335187245,
+          "sell_without_initial_inventory": 1883,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.017767749166295532,
+          "net_compounded_return_estimated": -0.8558358646290766,
+          "max_drawdown_net_estimated": 0.8558358646290766,
+          "average_gross_return_bps": 0.21790082653619514,
+          "average_net_return_bps_estimated": -23.76382748476693,
+          "average_cost_drag_bps_estimated": 23.981728311303137,
+          "net_win_fraction_estimated": 0.0012285012285012285
+        },
+        {
+          "window": 3,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 88,
+            "SELL": 1773,
+            "HOLD": 836
+          },
+          "signal_coverage": 0.6900259547645532,
+          "signal_before_expiry": 1861,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 88,
+          "trade_coverage": 0.03262884686688913,
+          "sell_without_initial_inventory": 1773,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 0,
+          "gross_compounded_return": -0.004195793330234232,
+          "net_compounded_return_estimated": -0.1938558284259534,
+          "max_drawdown_net_estimated": 0.1938558284259534,
+          "average_gross_return_bps": -0.47631411830528014,
+          "average_net_return_bps_estimated": -24.456377618465083,
+          "average_cost_drag_bps_estimated": 23.9800635001598,
+          "net_win_fraction_estimated": 0.0
+        },
+        {
+          "window": 4,
+          "tested_rows": 2704,
+          "signals": {
+            "BUY": 589,
+            "SELL": 232,
+            "HOLD": 1883
+          },
+          "signal_coverage": 0.3036242603550296,
+          "signal_before_expiry": 821,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 589,
+          "trade_coverage": 0.21782544378698224,
+          "sell_without_initial_inventory": 232,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.02719982823128153,
+          "net_compounded_return_estimated": -0.7502644970462553,
+          "max_drawdown_net_estimated": 0.7502644970462553,
+          "average_gross_return_bps": 0.45872721239497666,
+          "average_net_return_bps_estimated": -23.523578629619323,
+          "average_cost_drag_bps_estimated": 23.98230584201431,
+          "net_win_fraction_estimated": 0.013582342954159592
+        }
+      ]
+    },
+    {
+      "cost_scenario": "base_estimate",
+      "costs": {
+        "fee_bps_each_side": 10.0,
+        "spread_bps_total": 2.0,
+        "slippage_bps_each_side": 1.0
+      },
+      "latency_seconds_assumed": 1,
+      "total": {
+        "tested_rows": 10795,
+        "signals": {
+          "BUY": 1494,
+          "SELL": 6228,
+          "HOLD": 3073
+        },
+        "signal_coverage": 0.7153311718388142,
+        "signal_before_expiry": 7722,
+        "signal_before_expiry_fraction": 1.0,
+        "executed_buy_trades": 0,
+        "trade_coverage": 0.0,
+        "sell_without_initial_inventory": 6228,
+        "buy_without_observed_quote_after_generation": 1494,
+        "expired_buy": 0,
+        "gross_compounded_return": 0.0,
+        "net_compounded_return_estimated": 0.0,
+        "max_drawdown_net_estimated": 0.0,
+        "average_gross_return_bps": null,
+        "average_net_return_bps_estimated": null,
+        "average_cost_drag_bps_estimated": null,
+        "net_win_fraction_estimated": null
+      },
+      "windows": [
+        {
+          "window": 1,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 3,
+            "SELL": 2340,
+            "HOLD": 354
+          },
+          "signal_coverage": 0.8687430478309233,
+          "signal_before_expiry": 2343,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 2340,
+          "buy_without_observed_quote_after_generation": 3,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 2,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 814,
+            "SELL": 1883,
+            "HOLD": 0
+          },
+          "signal_coverage": 1.0,
+          "signal_before_expiry": 2697,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1883,
+          "buy_without_observed_quote_after_generation": 814,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 3,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 88,
+            "SELL": 1773,
+            "HOLD": 836
+          },
+          "signal_coverage": 0.6900259547645532,
+          "signal_before_expiry": 1861,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1773,
+          "buy_without_observed_quote_after_generation": 88,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 4,
+          "tested_rows": 2704,
+          "signals": {
+            "BUY": 589,
+            "SELL": 232,
+            "HOLD": 1883
+          },
+          "signal_coverage": 0.3036242603550296,
+          "signal_before_expiry": 821,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 232,
+          "buy_without_observed_quote_after_generation": 589,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        }
+      ]
+    },
+    {
+      "cost_scenario": "base_estimate",
+      "costs": {
+        "fee_bps_each_side": 10.0,
+        "spread_bps_total": 2.0,
+        "slippage_bps_each_side": 1.0
+      },
+      "latency_seconds_assumed": 5,
+      "total": {
+        "tested_rows": 10795,
+        "signals": {
+          "BUY": 1494,
+          "SELL": 6228,
+          "HOLD": 3073
+        },
+        "signal_coverage": 0.7153311718388142,
+        "signal_before_expiry": 7722,
+        "signal_before_expiry_fraction": 1.0,
+        "executed_buy_trades": 0,
+        "trade_coverage": 0.0,
+        "sell_without_initial_inventory": 6228,
+        "buy_without_observed_quote_after_generation": 1494,
+        "expired_buy": 0,
+        "gross_compounded_return": 0.0,
+        "net_compounded_return_estimated": 0.0,
+        "max_drawdown_net_estimated": 0.0,
+        "average_gross_return_bps": null,
+        "average_net_return_bps_estimated": null,
+        "average_cost_drag_bps_estimated": null,
+        "net_win_fraction_estimated": null
+      },
+      "windows": [
+        {
+          "window": 1,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 3,
+            "SELL": 2340,
+            "HOLD": 354
+          },
+          "signal_coverage": 0.8687430478309233,
+          "signal_before_expiry": 2343,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 2340,
+          "buy_without_observed_quote_after_generation": 3,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 2,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 814,
+            "SELL": 1883,
+            "HOLD": 0
+          },
+          "signal_coverage": 1.0,
+          "signal_before_expiry": 2697,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1883,
+          "buy_without_observed_quote_after_generation": 814,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 3,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 88,
+            "SELL": 1773,
+            "HOLD": 836
+          },
+          "signal_coverage": 0.6900259547645532,
+          "signal_before_expiry": 1861,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1773,
+          "buy_without_observed_quote_after_generation": 88,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 4,
+          "tested_rows": 2704,
+          "signals": {
+            "BUY": 589,
+            "SELL": 232,
+            "HOLD": 1883
+          },
+          "signal_coverage": 0.3036242603550296,
+          "signal_before_expiry": 821,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 232,
+          "buy_without_observed_quote_after_generation": 589,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        }
+      ]
+    },
+    {
+      "cost_scenario": "base_estimate",
+      "costs": {
+        "fee_bps_each_side": 10.0,
+        "spread_bps_total": 2.0,
+        "slippage_bps_each_side": 1.0
+      },
+      "latency_seconds_assumed": 30,
+      "total": {
+        "tested_rows": 10795,
+        "signals": {
+          "BUY": 1494,
+          "SELL": 6228,
+          "HOLD": 3073
+        },
+        "signal_coverage": 0.7153311718388142,
+        "signal_before_expiry": 7722,
+        "signal_before_expiry_fraction": 1.0,
+        "executed_buy_trades": 0,
+        "trade_coverage": 0.0,
+        "sell_without_initial_inventory": 6228,
+        "buy_without_observed_quote_after_generation": 1494,
+        "expired_buy": 0,
+        "gross_compounded_return": 0.0,
+        "net_compounded_return_estimated": 0.0,
+        "max_drawdown_net_estimated": 0.0,
+        "average_gross_return_bps": null,
+        "average_net_return_bps_estimated": null,
+        "average_cost_drag_bps_estimated": null,
+        "net_win_fraction_estimated": null
+      },
+      "windows": [
+        {
+          "window": 1,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 3,
+            "SELL": 2340,
+            "HOLD": 354
+          },
+          "signal_coverage": 0.8687430478309233,
+          "signal_before_expiry": 2343,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 2340,
+          "buy_without_observed_quote_after_generation": 3,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 2,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 814,
+            "SELL": 1883,
+            "HOLD": 0
+          },
+          "signal_coverage": 1.0,
+          "signal_before_expiry": 2697,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1883,
+          "buy_without_observed_quote_after_generation": 814,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 3,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 88,
+            "SELL": 1773,
+            "HOLD": 836
+          },
+          "signal_coverage": 0.6900259547645532,
+          "signal_before_expiry": 1861,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1773,
+          "buy_without_observed_quote_after_generation": 88,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 4,
+          "tested_rows": 2704,
+          "signals": {
+            "BUY": 589,
+            "SELL": 232,
+            "HOLD": 1883
+          },
+          "signal_coverage": 0.3036242603550296,
+          "signal_before_expiry": 821,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 232,
+          "buy_without_observed_quote_after_generation": 589,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        }
+      ]
+    },
+    {
+      "cost_scenario": "base_estimate",
+      "costs": {
+        "fee_bps_each_side": 10.0,
+        "spread_bps_total": 2.0,
+        "slippage_bps_each_side": 1.0
+      },
+      "latency_seconds_assumed": 60,
+      "total": {
+        "tested_rows": 10795,
+        "signals": {
+          "BUY": 1494,
+          "SELL": 6228,
+          "HOLD": 3073
+        },
+        "signal_coverage": 0.7153311718388142,
+        "signal_before_expiry": 0,
+        "signal_before_expiry_fraction": 0.0,
+        "executed_buy_trades": 0,
+        "trade_coverage": 0.0,
+        "sell_without_initial_inventory": 6228,
+        "buy_without_observed_quote_after_generation": 0,
+        "expired_buy": 1494,
+        "gross_compounded_return": 0.0,
+        "net_compounded_return_estimated": 0.0,
+        "max_drawdown_net_estimated": 0.0,
+        "average_gross_return_bps": null,
+        "average_net_return_bps_estimated": null,
+        "average_cost_drag_bps_estimated": null,
+        "net_win_fraction_estimated": null
+      },
+      "windows": [
+        {
+          "window": 1,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 3,
+            "SELL": 2340,
+            "HOLD": 354
+          },
+          "signal_coverage": 0.8687430478309233,
+          "signal_before_expiry": 0,
+          "signal_before_expiry_fraction": 0.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 2340,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 3,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 2,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 814,
+            "SELL": 1883,
+            "HOLD": 0
+          },
+          "signal_coverage": 1.0,
+          "signal_before_expiry": 0,
+          "signal_before_expiry_fraction": 0.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1883,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 814,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 3,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 88,
+            "SELL": 1773,
+            "HOLD": 836
+          },
+          "signal_coverage": 0.6900259547645532,
+          "signal_before_expiry": 0,
+          "signal_before_expiry_fraction": 0.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1773,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 88,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 4,
+          "tested_rows": 2704,
+          "signals": {
+            "BUY": 589,
+            "SELL": 232,
+            "HOLD": 1883
+          },
+          "signal_coverage": 0.3036242603550296,
+          "signal_before_expiry": 0,
+          "signal_before_expiry_fraction": 0.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 232,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 589,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        }
+      ]
+    },
+    {
+      "cost_scenario": "double_estimate",
+      "costs": {
+        "fee_bps_each_side": 20.0,
+        "spread_bps_total": 4.0,
+        "slippage_bps_each_side": 2.0
+      },
+      "latency_seconds_assumed": 0,
+      "total": {
+        "tested_rows": 10795,
+        "signals": {
+          "BUY": 1494,
+          "SELL": 6228,
+          "HOLD": 3073
+        },
+        "signal_coverage": 0.7153311718388142,
+        "signal_before_expiry": 7722,
+        "signal_before_expiry_fraction": 1.0,
+        "executed_buy_trades": 1494,
+        "trade_coverage": 0.13839740620657712,
+        "sell_without_initial_inventory": 6228,
+        "buy_without_observed_quote_after_generation": 0,
+        "expired_buy": 0,
+        "gross_compounded_return": 0.0439707087916017,
+        "net_compounded_return_estimated": -0.9992025987946047,
+        "max_drawdown_net_estimated": 0.9992025987946047,
+        "average_gross_return_bps": 0.2901858074008099,
+        "average_net_return_bps_estimated": -47.63605096518861,
+        "average_cost_drag_bps_estimated": 47.92623677258931,
+        "net_win_fraction_estimated": 0.0006693440428380187
+      },
+      "windows": [
+        {
+          "window": 1,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 3,
+            "SELL": 2340,
+            "HOLD": 354
+          },
+          "signal_coverage": 0.8687430478309233,
+          "signal_before_expiry": 2343,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 3,
+          "trade_coverage": 0.0011123470522803114,
+          "sell_without_initial_inventory": 2340,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0027917077078409847,
+          "net_compounded_return_estimated": -0.011556898054752796,
+          "max_drawdown_net_estimated": 0.011556898054752796,
+          "average_gross_return_bps": 9.297212588856851,
+          "average_net_return_bps_estimated": -38.672190220929345,
+          "average_cost_drag_bps_estimated": 47.969402809786196,
+          "net_win_fraction_estimated": 0.0
+        },
+        {
+          "window": 2,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 814,
+            "SELL": 1883,
+            "HOLD": 0
+          },
+          "signal_coverage": 1.0,
+          "signal_before_expiry": 2697,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 814,
+          "trade_coverage": 0.3018168335187245,
+          "sell_without_initial_inventory": 1883,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.017767749166295532,
+          "net_compounded_return_estimated": -0.9796128124093224,
+          "max_drawdown_net_estimated": 0.9796128124093224,
+          "average_gross_return_bps": 0.21790082653619514,
+          "average_net_return_bps_estimated": -47.70798952139516,
+          "average_cost_drag_bps_estimated": 47.92589034793137,
+          "net_win_fraction_estimated": 0.0012285012285012285
+        },
+        {
+          "window": 3,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 88,
+            "SELL": 1773,
+            "HOLD": 836
+          },
+          "signal_coverage": 0.6900259547645532,
+          "signal_before_expiry": 1861,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 88,
+          "trade_coverage": 0.03262884686688913,
+          "sell_without_initial_inventory": 1773,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 0,
+          "gross_compounded_return": -0.004195793330234232,
+          "net_compounded_return_estimated": -0.3475084526772301,
+          "max_drawdown_net_estimated": 0.3475084526772301,
+          "average_gross_return_bps": -0.47631411830528014,
+          "average_net_return_bps_estimated": -48.39887745180022,
+          "average_cost_drag_bps_estimated": 47.92256333349495,
+          "net_win_fraction_estimated": 0.0
+        },
+        {
+          "window": 4,
+          "tested_rows": 2704,
+          "signals": {
+            "BUY": 589,
+            "SELL": 232,
+            "HOLD": 1883
+          },
+          "signal_coverage": 0.3036242603550296,
+          "signal_before_expiry": 821,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 589,
+          "trade_coverage": 0.21782544378698224,
+          "sell_without_initial_inventory": 232,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.02719982823128153,
+          "net_compounded_return_estimated": -0.939355278798311,
+          "max_drawdown_net_estimated": 0.939355278798311,
+          "average_gross_return_bps": 0.45872721239497666,
+          "average_net_return_bps_estimated": -47.46831729228336,
+          "average_cost_drag_bps_estimated": 47.92704450467826,
+          "net_win_fraction_estimated": 0.0
+        }
+      ]
+    },
+    {
+      "cost_scenario": "double_estimate",
+      "costs": {
+        "fee_bps_each_side": 20.0,
+        "spread_bps_total": 4.0,
+        "slippage_bps_each_side": 2.0
+      },
+      "latency_seconds_assumed": 1,
+      "total": {
+        "tested_rows": 10795,
+        "signals": {
+          "BUY": 1494,
+          "SELL": 6228,
+          "HOLD": 3073
+        },
+        "signal_coverage": 0.7153311718388142,
+        "signal_before_expiry": 7722,
+        "signal_before_expiry_fraction": 1.0,
+        "executed_buy_trades": 0,
+        "trade_coverage": 0.0,
+        "sell_without_initial_inventory": 6228,
+        "buy_without_observed_quote_after_generation": 1494,
+        "expired_buy": 0,
+        "gross_compounded_return": 0.0,
+        "net_compounded_return_estimated": 0.0,
+        "max_drawdown_net_estimated": 0.0,
+        "average_gross_return_bps": null,
+        "average_net_return_bps_estimated": null,
+        "average_cost_drag_bps_estimated": null,
+        "net_win_fraction_estimated": null
+      },
+      "windows": [
+        {
+          "window": 1,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 3,
+            "SELL": 2340,
+            "HOLD": 354
+          },
+          "signal_coverage": 0.8687430478309233,
+          "signal_before_expiry": 2343,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 2340,
+          "buy_without_observed_quote_after_generation": 3,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 2,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 814,
+            "SELL": 1883,
+            "HOLD": 0
+          },
+          "signal_coverage": 1.0,
+          "signal_before_expiry": 2697,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1883,
+          "buy_without_observed_quote_after_generation": 814,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 3,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 88,
+            "SELL": 1773,
+            "HOLD": 836
+          },
+          "signal_coverage": 0.6900259547645532,
+          "signal_before_expiry": 1861,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1773,
+          "buy_without_observed_quote_after_generation": 88,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 4,
+          "tested_rows": 2704,
+          "signals": {
+            "BUY": 589,
+            "SELL": 232,
+            "HOLD": 1883
+          },
+          "signal_coverage": 0.3036242603550296,
+          "signal_before_expiry": 821,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 232,
+          "buy_without_observed_quote_after_generation": 589,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        }
+      ]
+    },
+    {
+      "cost_scenario": "double_estimate",
+      "costs": {
+        "fee_bps_each_side": 20.0,
+        "spread_bps_total": 4.0,
+        "slippage_bps_each_side": 2.0
+      },
+      "latency_seconds_assumed": 5,
+      "total": {
+        "tested_rows": 10795,
+        "signals": {
+          "BUY": 1494,
+          "SELL": 6228,
+          "HOLD": 3073
+        },
+        "signal_coverage": 0.7153311718388142,
+        "signal_before_expiry": 7722,
+        "signal_before_expiry_fraction": 1.0,
+        "executed_buy_trades": 0,
+        "trade_coverage": 0.0,
+        "sell_without_initial_inventory": 6228,
+        "buy_without_observed_quote_after_generation": 1494,
+        "expired_buy": 0,
+        "gross_compounded_return": 0.0,
+        "net_compounded_return_estimated": 0.0,
+        "max_drawdown_net_estimated": 0.0,
+        "average_gross_return_bps": null,
+        "average_net_return_bps_estimated": null,
+        "average_cost_drag_bps_estimated": null,
+        "net_win_fraction_estimated": null
+      },
+      "windows": [
+        {
+          "window": 1,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 3,
+            "SELL": 2340,
+            "HOLD": 354
+          },
+          "signal_coverage": 0.8687430478309233,
+          "signal_before_expiry": 2343,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 2340,
+          "buy_without_observed_quote_after_generation": 3,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 2,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 814,
+            "SELL": 1883,
+            "HOLD": 0
+          },
+          "signal_coverage": 1.0,
+          "signal_before_expiry": 2697,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1883,
+          "buy_without_observed_quote_after_generation": 814,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 3,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 88,
+            "SELL": 1773,
+            "HOLD": 836
+          },
+          "signal_coverage": 0.6900259547645532,
+          "signal_before_expiry": 1861,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1773,
+          "buy_without_observed_quote_after_generation": 88,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 4,
+          "tested_rows": 2704,
+          "signals": {
+            "BUY": 589,
+            "SELL": 232,
+            "HOLD": 1883
+          },
+          "signal_coverage": 0.3036242603550296,
+          "signal_before_expiry": 821,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 232,
+          "buy_without_observed_quote_after_generation": 589,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        }
+      ]
+    },
+    {
+      "cost_scenario": "double_estimate",
+      "costs": {
+        "fee_bps_each_side": 20.0,
+        "spread_bps_total": 4.0,
+        "slippage_bps_each_side": 2.0
+      },
+      "latency_seconds_assumed": 30,
+      "total": {
+        "tested_rows": 10795,
+        "signals": {
+          "BUY": 1494,
+          "SELL": 6228,
+          "HOLD": 3073
+        },
+        "signal_coverage": 0.7153311718388142,
+        "signal_before_expiry": 7722,
+        "signal_before_expiry_fraction": 1.0,
+        "executed_buy_trades": 0,
+        "trade_coverage": 0.0,
+        "sell_without_initial_inventory": 6228,
+        "buy_without_observed_quote_after_generation": 1494,
+        "expired_buy": 0,
+        "gross_compounded_return": 0.0,
+        "net_compounded_return_estimated": 0.0,
+        "max_drawdown_net_estimated": 0.0,
+        "average_gross_return_bps": null,
+        "average_net_return_bps_estimated": null,
+        "average_cost_drag_bps_estimated": null,
+        "net_win_fraction_estimated": null
+      },
+      "windows": [
+        {
+          "window": 1,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 3,
+            "SELL": 2340,
+            "HOLD": 354
+          },
+          "signal_coverage": 0.8687430478309233,
+          "signal_before_expiry": 2343,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 2340,
+          "buy_without_observed_quote_after_generation": 3,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 2,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 814,
+            "SELL": 1883,
+            "HOLD": 0
+          },
+          "signal_coverage": 1.0,
+          "signal_before_expiry": 2697,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1883,
+          "buy_without_observed_quote_after_generation": 814,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 3,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 88,
+            "SELL": 1773,
+            "HOLD": 836
+          },
+          "signal_coverage": 0.6900259547645532,
+          "signal_before_expiry": 1861,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1773,
+          "buy_without_observed_quote_after_generation": 88,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 4,
+          "tested_rows": 2704,
+          "signals": {
+            "BUY": 589,
+            "SELL": 232,
+            "HOLD": 1883
+          },
+          "signal_coverage": 0.3036242603550296,
+          "signal_before_expiry": 821,
+          "signal_before_expiry_fraction": 1.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 232,
+          "buy_without_observed_quote_after_generation": 589,
+          "expired_buy": 0,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        }
+      ]
+    },
+    {
+      "cost_scenario": "double_estimate",
+      "costs": {
+        "fee_bps_each_side": 20.0,
+        "spread_bps_total": 4.0,
+        "slippage_bps_each_side": 2.0
+      },
+      "latency_seconds_assumed": 60,
+      "total": {
+        "tested_rows": 10795,
+        "signals": {
+          "BUY": 1494,
+          "SELL": 6228,
+          "HOLD": 3073
+        },
+        "signal_coverage": 0.7153311718388142,
+        "signal_before_expiry": 0,
+        "signal_before_expiry_fraction": 0.0,
+        "executed_buy_trades": 0,
+        "trade_coverage": 0.0,
+        "sell_without_initial_inventory": 6228,
+        "buy_without_observed_quote_after_generation": 0,
+        "expired_buy": 1494,
+        "gross_compounded_return": 0.0,
+        "net_compounded_return_estimated": 0.0,
+        "max_drawdown_net_estimated": 0.0,
+        "average_gross_return_bps": null,
+        "average_net_return_bps_estimated": null,
+        "average_cost_drag_bps_estimated": null,
+        "net_win_fraction_estimated": null
+      },
+      "windows": [
+        {
+          "window": 1,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 3,
+            "SELL": 2340,
+            "HOLD": 354
+          },
+          "signal_coverage": 0.8687430478309233,
+          "signal_before_expiry": 0,
+          "signal_before_expiry_fraction": 0.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 2340,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 3,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 2,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 814,
+            "SELL": 1883,
+            "HOLD": 0
+          },
+          "signal_coverage": 1.0,
+          "signal_before_expiry": 0,
+          "signal_before_expiry_fraction": 0.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1883,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 814,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 3,
+          "tested_rows": 2697,
+          "signals": {
+            "BUY": 88,
+            "SELL": 1773,
+            "HOLD": 836
+          },
+          "signal_coverage": 0.6900259547645532,
+          "signal_before_expiry": 0,
+          "signal_before_expiry_fraction": 0.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 1773,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 88,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        },
+        {
+          "window": 4,
+          "tested_rows": 2704,
+          "signals": {
+            "BUY": 589,
+            "SELL": 232,
+            "HOLD": 1883
+          },
+          "signal_coverage": 0.3036242603550296,
+          "signal_before_expiry": 0,
+          "signal_before_expiry_fraction": 0.0,
+          "executed_buy_trades": 0,
+          "trade_coverage": 0.0,
+          "sell_without_initial_inventory": 232,
+          "buy_without_observed_quote_after_generation": 0,
+          "expired_buy": 589,
+          "gross_compounded_return": 0.0,
+          "net_compounded_return_estimated": 0.0,
+          "max_drawdown_net_estimated": 0.0,
+          "average_gross_return_bps": null,
+          "average_net_return_bps_estimated": null,
+          "average_cost_drag_bps_estimated": null,
+          "net_win_fraction_estimated": null
+        }
+      ]
+    }
+  ],
+  "limits": "Las velas 1m no permiten reconstruir bid/ask, precio después de la generación intraminuto ni ejecución de stops. Con latencia positiva se informa falta de cotización observable, no ausencia demostrada de oportunidad real. Ningún resultado valida rentabilidad operable."
+}

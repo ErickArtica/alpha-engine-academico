@@ -1,0 +1,11 @@
+# Frontend server-side. No worker, training, or LLM provider runtime.
+pydantic>=2.8,<3
+pydantic-settings>=2.4,<3
+httpx>=0.27,<1
+pandas>=2.2,<3
+numpy>=2.0,<3
+joblib>=1.4,<2
+supabase>=2.31,<3
+plotly>=5.24,<7
+# Match the locally validated dashboard release; not a remedy for Cloud HTTP 500.
+streamlit==1.66.1

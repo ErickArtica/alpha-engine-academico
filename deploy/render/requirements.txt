@@ -1,0 +1,11 @@
+# Render Web Service, run from the repository root. No Streamlit or APScheduler.
+uvicorn>=0.30,<1
+pydantic>=2.8,<3
+pydantic-settings>=2.4,<3
+httpx>=0.27,<1
+pandas>=2.2,<3
+numpy>=2.0,<3
+scikit-learn==1.9.1
+xgboost==3.4.1
+joblib==1.6.0
+supabase>=2.31,<3

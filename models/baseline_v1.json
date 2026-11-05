@@ -1,0 +1,47 @@
+{
+  "name": "majority_class",
+  "trained_on": "TRAIN",
+  "majority_class": 0,
+  "validation": {
+    "sample_count": 6473,
+    "accuracy": 0.5351459910397034,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "confusion_matrix": [
+      [
+        3464,
+        0
+      ],
+      [
+        3009,
+        0
+      ]
+    ],
+    "confusion_labels": [
+      "DOWN",
+      "UP"
+    ]
+  },
+  "test": {
+    "sample_count": 6476,
+    "accuracy": 0.5171402100061766,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "confusion_matrix": [
+      [
+        3349,
+        0
+      ],
+      [
+        3127,
+        0
+      ]
+    ],
+    "confusion_labels": [
+      "DOWN",
+      "UP"
+    ]
+  }
+}

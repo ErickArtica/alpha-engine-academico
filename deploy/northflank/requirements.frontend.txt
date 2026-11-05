@@ -1,0 +1,13 @@
+# Frontend runtime only. No editable package install or worker/full extra.
+# The independent public reader imports no inference module or Supabase SDK.
+pydantic>=2.8,<3
+httpx>=0.27,<1
+pandas>=2.2,<3
+numpy>=2.0,<3
+streamlit==1.66.1
+# Match the mitigation recorded in Cloud's startup log; no model dependency.
+pyarrow==24.0.0
+# Same Plotly version observed locally and in the downloaded Cloud log.
+plotly==6.9.0
+# Required for ZoneInfo('America/Lima') on minimal container images.
+tzdata>=2024.1

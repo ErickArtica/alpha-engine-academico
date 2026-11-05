@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "files_scanned": 302,
+  "python_files_parsed": 253,
+  "operational_secret_matches": 0,
+  "findings": [],
+  "original_history_copied": false,
+  "private_data_or_logs_included": false,
+  "actual_demo_user_config_included": false,
+  "model_v1_checksum_verified": true,
+  "providers_called": 0,
+  "remote_services_modified": false
+}

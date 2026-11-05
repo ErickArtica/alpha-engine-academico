@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=70", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "alpha-engine"
+version = "0.1.0"
+description = "PMV académico de analítica para apoyo a decisiones de scalping"
+requires-python = ">=3.12"
+dependencies = [
+  "pydantic>=2.8,<3",
+  "pydantic-settings>=2.4,<3",
+  "influxdb-client>=1.48,<2",
+  "httpx>=0.27,<1",
+  "APScheduler>=3.10,<4",
+  "pandas>=2.2,<3",
+  "numpy>=2.0,<3",
+  "scikit-learn>=1.5,<2",
+  "xgboost>=2.1,<4",
+  "joblib>=1.4,<2",
+  "supabase>=2.31,<3",
+]
+
+[project.optional-dependencies]
+full = [
+  "plotly>=5.24,<7",
+  "streamlit==1.66.1",
+]
+dev = ["pytest>=8,<10"]
+
+[tool.setuptools.packages.find]
+include = ["alpha_engine*", "streamlit_app*"]
+
+[tool.setuptools.package-data]
+"alpha_engine.ai.prompts" = ["*.txt"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: requires an explicitly configured local service"]

@@ -1,0 +1,2 @@
+-e .[full,dev]
+-r deploy/render/requirements.txt

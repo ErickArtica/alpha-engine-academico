@@ -1,0 +1,73 @@
+{
+  "system": {
+    "project": "Alpha Engine",
+    "purpose": "Academic scalping decision support",
+    "real_trading": false,
+    "context_version": "context_paper_explain_v1"
+  },
+  "market": {
+    "symbol": "BTCUSDT",
+    "timestamp": "2026-10-17T09:06:00Z",
+    "close_time": "2026-10-17T09:06:59.999000Z",
+    "price": 81728.01,
+    "change_1m_pct": 0.0,
+    "volume": 0.68914
+  },
+  "indicators": {
+    "return_1m": 0.0,
+    "rsi_14": 61.11605742792891,
+    "ema_20": 81711.69378501052,
+    "macd": 6.919948223847314,
+    "macd_signal": 3.8184896125158305,
+    "macd_histogram": 3.1014586113314833,
+    "rolling_volatility": 0.0001240611510247642,
+    "volume_change": 0.37246076635067316
+  },
+  "prediction": {
+    "prediction_id": "96e6219758ea70599a6e5f23d689f87de7e2ad2edc68209f994434c89851ce5f",
+    "horizon": "1m",
+    "prob_up": 0.393775999546051,
+    "prob_down": 0.606224000453949,
+    "predicted_class": "DOWN",
+    "model_version": "xgboost_v1"
+  },
+  "risk": {
+    "level": "MEDIUM",
+    "reference_price": 81728.01,
+    "stop_loss": 81891.46601999999,
+    "take_profit": 81482.82596999999,
+    "triggers": [
+      "MACD_CONTRADICTS_DIRECTION"
+    ],
+    "rule_version": "risk_v1"
+  },
+  "decision_policy": {
+    "candidate_signal": "SELL",
+    "action": "WAIT",
+    "position": "SIN_POSICION",
+    "action_authority": "deterministic_rules_only",
+    "minimum_model_probability": 0.6,
+    "probability_gate_role": "experimental_prescriptive_guardrail",
+    "probability_gate_quality_validated": false,
+    "high_risk_requires_hold": true,
+    "expired_prediction_requires_hold": true,
+    "probabilities_calibrated": false,
+    "action_reason": "La predicción no está vigente."
+  },
+  "validation_context": {
+    "test_type": "EXPLICACION_HISTORICA_CONTROLADA",
+    "operational_recommendation": false,
+    "evaluated_at": "2026-10-17T09:10:44.013626+00:00",
+    "source_generated_at": "2026-10-17T09:07:01.549641+00:00",
+    "source_valid_until": "2026-10-17T09:07:59.999000+00:00",
+    "expired_at_evaluation": true,
+    "historical_action_flat": "WAIT",
+    "historical_action_reason": "Sin señal de entrada; esperar y no entrar.",
+    "historical_guardrails": [],
+    "current_guardrails": [
+      "PREDICTION_EXPIRED",
+      "STALE_MARKET_DATA"
+    ],
+    "position_is_test_assumption": true
+  }
+}

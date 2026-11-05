@@ -1,0 +1,11 @@
+FROM python:3.12-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONPATH=/app
+WORKDIR /app
+COPY streamlit_app/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt "psycopg2-binary>=2.9,<3"
+COPY alpha_engine /app/alpha_engine
+COPY streamlit_app /app/streamlit_app
+COPY models/xgboost_v1.joblib models/xgboost_v1.sha256 models/xgboost_v1_metadata.json /app/models/
+COPY models/baseline_v1.json models/economic_summary_v1.json /app/models/
+EXPOSE 8501
+CMD ["streamlit", "run", "streamlit_app/Home.py", "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true", "--browser.gatherUsageStats=false"]
