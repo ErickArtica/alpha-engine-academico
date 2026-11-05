@@ -17,7 +17,7 @@ Esta distribución pública contiene frontend, backend, dependencias, modelo V1,
 | Simulación | Replay histórico y cartera virtual en memoria; sin persistencia pública |
 | Acceso DEMO | Backend independiente, cuentas individuales, sesiones de quince minutos, cuotas persistentes |
 | NVIDIA Muse Glimmer | DEMO LIVE comprobado el 05/11/2026: una generación real WAIT coherente, 16.361 s y 1179 tokens, visible en el frontend autorizado. SSE con límite total de 85 s; cuotas persistentes; sin acceso anónimo. La prueba anterior falló por timeout |
-| Marketaux / sentimiento | Cliente BTCUSD corregido y agregado con deduplicación, relevancia y caducidad; pruebas offline aprobadas. LIVE desactivado: cuenta/token y derechos de exposición pendientes. N/A no significa neutral |
+| Marketaux / sentimiento | Cliente BTCUSD y agregado probados offline. Prueba técnica interna HTTP 200; no se obtuvo un sentimiento BTC LIVE validado. Sigue desactivado para terceros por derechos pendientes; token operativo no instalado en el backend DEMO. N/A no significa neutral |
 | Carteras persistentes | Código disponible; excluidas del frontend público y del backend académico aislado |
 
 La disponibilidad del endpoint público no equivale a acceso a las acciones protegidas. No se incluyen usuarios, contraseñas ni claves. El modo DEMO actual tiene expiración temporal; no se garantizan credenciales de presentación permanentes.

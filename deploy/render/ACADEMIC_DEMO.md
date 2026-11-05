@@ -4,7 +4,11 @@ Estado 05/11/2026: backend DEMO y frontend desplegados; seis pantallas verificad
 Muse respondió HTTP 200 en una generación real controlada: 16.361 s, 1179 tokens,
 acción WAIT inalterada y explicación comprobada en el frontend DEMO. NVIDIA está
 habilitado solo para sesiones autorizadas con cuotas persistentes. Marketaux sigue
-desactivado para terceros, pendiente de cuenta/token y derechos de exposición.
+desactivado para terceros. La prueba técnica interna respondió HTTP 200 en 5.517 s,
+pero ninguna noticia pasó la normalización; el agregado es N/A. No se guardó el payload
+y no puede identificarse retrospectivamente el campo que provocó el descarte. No se
+forzó otra consulta durante el bloqueo de 30 minutos. Faltan derechos de exposición
+y configurar el token únicamente en el backend antes de una activación permitida.
 
 El lector público conserva sus controles. El panel adicional de Prescriptivo requiere
 activación explícita y sesión autorizada. No habilita paper persistente ni Cron.
@@ -64,7 +68,8 @@ inequívoca para redistribuir contenido o derivados en este dashboard público.
 No asumir que acceso Free o finalidad académica resuelve esos derechos. Obtener
 confirmación de las condiciones aplicables antes de aprobar visualización/caché
 derivada, incluso en DEMO. Hasta entonces, noticias N/A y flags desactivados.
-La API real, cuota de la cuenta y símbolos aceptados siguen sin probarse.
+La cuenta Free y el uso técnico interno se confirmaron por entrada privada. El endpoint
+real respondió HTTP 200; esto no valida un sentimiento BTC LIVE ni autoriza redistribución.
 
 No se detectaron claves de proveedores en entorno/local `.env` del worktree.
 Los nombres y presencia de configuración del backend DEMO se verificaron sin registrar valores.
@@ -159,8 +164,9 @@ la integración exige ese modelo explícitamente y no sustituye el modelo histó
   SELL/LOW y HOLD/MEDIUM como tres casos PASS. Se conservan como evidencia histórica
   declarada por ese material; no se reejecutaron llamadas. Las nuevas pruebas reproducen
   esas combinaciones con mocks y añaden WAIT, sin afirmar disponibilidad LIVE del proveedor.
-- PENDIENTE: cuenta/token Marketaux y derechos de exposición. La activación del backend,
-  frontend DEMO y una explicación real Muse ya están verificadas.
+- PENDIENTE: obtener noticias BTC elegibles en una próxima prueba permitida, configurar
+  token Marketaux solo en backend y resolver derechos de exposición. La activación del
+  backend, frontend DEMO y una explicación real Muse ya están verificadas.
 - No implementado en esta entrega: carteras persistentes multiusuario ni trading real.
 
 Un eventual repositorio académico público requiere una exportación nueva revisada de código y

@@ -52,8 +52,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 7087,
-      "sha256": "12974d076ae1ca325f637d4429f7a7592aab38780fc2d27b069b5ae856e93286"
+      "bytes": 7142,
+      "sha256": "864fdbe94b2eaac93c987376e070ba14aed85ff8e4d06427dbb718750aeeb2d3"
     },
     {
       "path": "alpha_engine/__init__.py",
@@ -742,8 +742,8 @@
     },
     {
       "path": "deploy/render/ACADEMIC_DEMO.md",
-      "bytes": 12468,
-      "sha256": "f427644b1061b57cbad1315a19deae83b457532e2f7cef60e7cc1315b3649ac3"
+      "bytes": 13024,
+      "sha256": "f079b4382f0a2e5dccc9e50507d949d6905944615a3434b0946ddcbd3f65a100"
     },
     {
       "path": "deploy/render/__init__.py",
