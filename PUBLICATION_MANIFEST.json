@@ -647,8 +647,8 @@
     },
     {
       "path": "deploy/northflank/public_views.py",
-      "bytes": 21327,
-      "sha256": "c0b2900cbb5367a18b510b626096f9c44226fcfc0484f1b52e7f0b5780686696"
+      "bytes": 21373,
+      "sha256": "188827c4074474cc57e8af736b0c92a4886cc1118319bd677fb45bd79f184089"
     },
     {
       "path": "deploy/northflank/publication_audit.py",
@@ -682,8 +682,8 @@
     },
     {
       "path": "deploy/northflank/test_public_views.py",
-      "bytes": 4728,
-      "sha256": "fda20d1387f93e5d9defec1aa2bcfdf5f07db6f8367447be652e94dfd3871954"
+      "bytes": 4829,
+      "sha256": "8f1aa9d57c52e0c64bd2db5aa6a0c4906a34e5f5e0a171596c858a09f9682b3d"
     },
     {
       "path": "deploy/northflank/test_public_visual_parity.py",

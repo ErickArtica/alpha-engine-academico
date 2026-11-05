@@ -102,7 +102,9 @@ def begin(title: str, question: str) -> dict:
             st.rerun()
     if title != "Simulación":
         refresh_tick()
-    section = next(key for key, (label, _) in ROUTES.items() if label == title)
+    section = "inicio" if title == "Alpha Engine" else next(
+        key for key, (label, _) in ROUTES.items() if label == title
+    )
     st.caption("Modo: REPLAY · muestra persistida · actualización manual" if section == "simulacion" else
                "Modo: LIVE · Storage: Supabase · hora Lima / UTC · actualización de la página ~60 s")
     try:
@@ -398,7 +400,7 @@ def render_simulation() -> None:
 
 
 ROUTES = {
-    "inicio": ("Alpha Engine", render_home),
+    "inicio": ("Home", render_home),
     "descriptivo": ("Descriptivo", render_descriptive),
     "predictivo": ("Predictivo", render_predictive),
     "prescriptivo": ("Prescriptivo", render_prescriptive),

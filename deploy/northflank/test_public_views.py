@@ -50,7 +50,7 @@ class PublicViewsTests(unittest.TestCase):
                 app.session_state["paper_portfolio_id"] = "synthetic-ignored"
                 app.run()
                 self.assertFalse(app.exception)
-                self.assertEqual(app.title[0].value, title)
+                self.assertEqual(app.title[0].value, "Alpha Engine" if route == "inicio" else title)
                 labels = [button.label for button in app.button]
                 self.assertFalse(any(word in label for label in labels for word in ("Generar", "Crear cartera", "Aplicar operación", "Reiniciar simulación", "LLM")))
         self.assertTrue(self.requests)
@@ -75,6 +75,7 @@ class PublicViewsTests(unittest.TestCase):
         self.assertTrue(any(m.label == "Accuracy LIVE" and m.value == "100.0%" for m in app.metric))
 
     def test_router_rejects_original_pages_and_action_paths(self):
+        self.assertEqual(views.ROUTES["inicio"][0], "Home")
         for route in ("5_Simulacion", "3_Prescriptivo", "../streamlit_app/pages/3_Prescriptivo.py", "/api/paper", "/api/recommendation"):
             with self.subTest(route=route), self.assertRaises(ValueError):
                 views.resolve_page(route)
