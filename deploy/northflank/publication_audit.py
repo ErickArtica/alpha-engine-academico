@@ -57,6 +57,7 @@ def audit_publication() -> dict:
         'tests/test_marketaux_diagnostics.py',
         'tests/test_reconstruction_helpers.py',
     })
+    academic_paths.update({'tests/test_marketaux_prescriptive_integration.py', 'docs/05_EVOLUCION_POST_ENTREGA.md'})
     if additional - academic_paths:
         raise ValueError("Unreviewed academic backend publication path")
     proposed |= additional

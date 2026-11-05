@@ -74,6 +74,8 @@
     "scripts/verify_local.py",
     "scripts/probe_academic_provider.py",
     "tests/test_marketaux_diagnostics.py",
-    "tests/test_reconstruction_helpers.py"
+    "tests/test_reconstruction_helpers.py",
+    "docs/05_EVOLUCION_POST_ENTREGA.md",
+    "tests/test_marketaux_prescriptive_integration.py"
   ]
 }

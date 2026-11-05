@@ -57,8 +57,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 8161,
-      "sha256": "bb0c9095b35c22753ad91e5a205a99c537db567d06a2f550e4f43bee77547187"
+      "bytes": 8446,
+      "sha256": "addc060ee0ae47246b3ff38308cf9f10a8b2c0d58fa4df4108edf4c6e1769390"
     },
     {
       "path": "alpha_engine/__init__.py",
@@ -647,8 +647,8 @@
     },
     {
       "path": "deploy/northflank/PUBLICATION_MANIFEST.json",
-      "bytes": 3241,
-      "sha256": "0d9de8ce2d76b312a09ad921b06847d1cc35790dbbfd99016c6957323f148600"
+      "bytes": 3338,
+      "sha256": "673ae89c3d2f796e307dc4c7a960964a3cf9b8e9f13b488de610af73a506d84c"
     },
     {
       "path": "deploy/northflank/academic_client.py",
@@ -712,8 +712,8 @@
     },
     {
       "path": "deploy/northflank/publication_audit.py",
-      "bytes": 5433,
-      "sha256": "754bdf802dd5851c3aa864f90df3476193a85813598596ed89b7cb9521a17114"
+      "bytes": 5550,
+      "sha256": "03d6b93f2f355ec6842636fd51812e6f52d6e3f592ab13109bf719b36292a69f"
     },
     {
       "path": "deploy/northflank/requirements.frontend.txt",
@@ -864,6 +864,11 @@
       "path": "docs/04_PRUEBAS_DE_RECONSTRUCCION.md",
       "bytes": 12289,
       "sha256": "5a9be3bc8b005485227ff519af093a039a9502970d05a72bd444081941b1e863"
+    },
+    {
+      "path": "docs/05_EVOLUCION_POST_ENTREGA.md",
+      "bytes": 4510,
+      "sha256": "2597d7425f5a1344639de0e6c120e5b8067bd7e4497a5b9e90512155723de9da"
     },
     {
       "path": "models/baseline_v1.json",
@@ -1386,6 +1391,11 @@
       "sha256": "ab766518785560cc3b9564d77d8938c775aa23c7abd12fc16cd49f39e810d797"
     },
     {
+      "path": "tests/test_marketaux_prescriptive_integration.py",
+      "bytes": 5075,
+      "sha256": "8bcfbc18cc614cda2cec7df09945776445e51c9b0e5ed8266c7635437c5bddbc"
+    },
+    {
       "path": "tests/test_microstructure_experimental.py",
       "bytes": 3752,
       "sha256": "38611b259d7587600d425da778948e26be5c0162eac2d906fdc937453922ce74"
@@ -1597,5 +1607,5 @@
     }
   ],
   "history": "Clean academic export; subsequent reviewed source-only commits; no original Git history",
-  "source_notes": "Reviewed academic export; original private history excluded. Marketaux fix prepared, not deployed or enabled in production."
+  "source_notes": "Post-delivery evolution: corrected parser deployed only to DEMO backend; news redistribution and periodic ingestion disabled. Original private history excluded."
 }
