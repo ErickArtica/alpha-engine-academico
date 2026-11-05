@@ -57,8 +57,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 8446,
-      "sha256": "addc060ee0ae47246b3ff38308cf9f10a8b2c0d58fa4df4108edf4c6e1769390"
+      "bytes": 8467,
+      "sha256": "0240b25dc4e2ab4349007295a49e3a82c92ee4b12fabba83eb3a8bd06ecd082d"
     },
     {
       "path": "alpha_engine/__init__.py",
@@ -867,8 +867,8 @@
     },
     {
       "path": "docs/05_EVOLUCION_POST_ENTREGA.md",
-      "bytes": 4510,
-      "sha256": "2597d7425f5a1344639de0e6c120e5b8067bd7e4497a5b9e90512155723de9da"
+      "bytes": 6288,
+      "sha256": "4c204f622230eb4a3a47fdfdf40e8500f8bc6402144c7db929bac684782074b1"
     },
     {
       "path": "models/baseline_v1.json",

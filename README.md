@@ -1,6 +1,6 @@
 # ALPHA ENGINE — proyecto académico
 
-[Evolución posterior a la entrega](docs/05_EVOLUCION_POST_ENTREGA.md): corrección Marketaux desplegada, prueba LIVE interna controlada y exposición al profesor bloqueada por derechos no verificados. El cuestionario entregado permanece intacto.
+[Evolución posterior a la entrega](docs/05_EVOLUCION_POST_ENTREGA.md): corrección Marketaux desplegada, prueba LIVE interna HTTP 200 sin noticias elegibles y exposición al profesor bloqueada por derechos no verificados. El cuestionario entregado permanece intacto.
 
 ## Guías actuales de reconstrucción
 
