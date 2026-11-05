@@ -77,7 +77,7 @@ class DemoPanelTests(unittest.TestCase):
     def test_anonymous_panel_has_no_provider_action(self):
         app=self.app().run()
         self.assertFalse(app.exception)
-        self.assertNotIn("Explicar con NVIDIA",{b.label for b in app.button})
+        self.assertNotIn("Generar explicación con IA",{b.label for b in app.button})
         self.assertFalse(self.calls)
 
     def test_public_default_has_no_login_or_requests(self):
@@ -95,7 +95,7 @@ class DemoPanelTests(unittest.TestCase):
         self.assertFalse(app.exception)
         # AppTest represents full-script reruns; execute once after fragment rerun.
         app.run()
-        self.button(app,"Explicar con NVIDIA").click().run()
+        self.button(app,"Generar explicación con IA").click().run()
         self.assertFalse(app.exception)
         self.assertEqual(next(m.value for m in app.metric if m.label=="Decisión determinista"),"WAIT")
         self.assertTrue(any("HISTÓRICO" in c.value for c in app.caption))
@@ -105,7 +105,7 @@ class DemoPanelTests(unittest.TestCase):
         self.assertFalse(app.exception)
         self.button(app,"Cerrar sesión DEMO").click().run()
         app.run()
-        self.assertNotIn("Explicar con NVIDIA",{b.label for b in app.button})
+        self.assertNotIn("Generar explicación con IA",{b.label for b in app.button})
         self.assertEqual([x[0] for x in self.calls],["login","explain","news","logout"])
 
     def test_expired_session_removed_before_any_action(self):
@@ -113,8 +113,24 @@ class DemoPanelTests(unittest.TestCase):
         app.session_state[panel.SESSION]={"token":"fixture-expired","expires_at":time.time()-1}
         app.run()
         self.assertFalse(app.exception)
-        self.assertNotIn("Explicar con NVIDIA",{b.label for b in app.button})
+        self.assertNotIn("Generar explicación con IA",{b.label for b in app.button})
         self.assertFalse(self.calls)
+
+    def test_provider_error_keeps_deterministic_decision_without_fake_explanation(self):
+        class FailedClient:
+            def __init__(self,origin):pass
+            def post(self,*args):
+                return 502,{"status":"PROVIDER_READ_TIMEOUT","decision":{"action":"WAIT"},
+                            "prediction":{},"source":{},"risk":{},"news":{}}
+        app=self.app()
+        app.session_state[panel.SESSION]={"token":"fixture-signed-session","expires_at":time.time()+900}
+        with patch.object(panel,"DemoClient",FailedClient):
+            app.run()
+            self.button(app,"Generar explicación con IA").click().run()
+        self.assertFalse(app.exception)
+        self.assertEqual(next(m.value for m in app.metric if m.label=="Decisión determinista"),"WAIT")
+        self.assertTrue(any("PROVIDER_READ_TIMEOUT" in w.value for w in app.warning))
+        self.assertFalse(any("Explicación NVIDIA" in s.value for s in app.subheader))
 
 
 if __name__=="__main__":unittest.main()

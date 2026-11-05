@@ -16,8 +16,8 @@ Esta distribución pública contiene frontend, backend, dependencias, modelo V1,
 | Prescriptivo | Reglas BUY/SELL/HOLD/WAIT; gate experimental **0.60** conservado |
 | Simulación | Replay histórico y cartera virtual en memoria; sin persistencia pública |
 | Acceso DEMO | Backend independiente, cuentas individuales, sesiones de quince minutos, cuotas persistentes |
-| NVIDIA Muse Glimmer | Adaptador implementado. Una generación real autorizada terminó por timeout; NO hay explicación LIVE validada. LLM desactivado al cerrar la prueba |
-| Marketaux / sentimiento | Adaptadores implementados; LIVE desactivado por autorización/derechos pendientes. N/A no significa neutral |
+| NVIDIA Muse Glimmer | DEMO LIVE comprobado el 05/11/2026: una generación real WAIT coherente, 16.361 s y 1179 tokens, visible en el frontend autorizado. SSE con límite total de 85 s; cuotas persistentes; sin acceso anónimo. La prueba anterior falló por timeout |
+| Marketaux / sentimiento | Cliente BTCUSD corregido y agregado con deduplicación, relevancia y caducidad; pruebas offline aprobadas. LIVE desactivado: cuenta/token y derechos de exposición pendientes. N/A no significa neutral |
 | Carteras persistentes | Código disponible; excluidas del frontend público y del backend académico aislado |
 
 La disponibilidad del endpoint público no equivale a acceso a las acciones protegidas. No se incluyen usuarios, contraseñas ni claves. El modo DEMO actual tiene expiración temporal; no se garantizan credenciales de presentación permanentes.
@@ -45,7 +45,7 @@ python -m venv .venv
 # Windows: .venv\Scripts\activate
 # Linux/macOS: source .venv/bin/activate
 python -m pip install -r requirements.txt
-python -m pytest tests/test_academic_demo.py -q
+python -m pytest tests/test_academic_demo.py tests/test_academic_provider_reliability.py -q
 ```
 
 Las pruebas académicas utilizan mocks y estado temporal; no necesitan claves reales. No ejecutar pruebas marcadas de integración ni scripts de ingesta contra proyectos ajenos. La instalación completa incluye dependencias de investigación; el frontend tiene su lista reducida independiente.

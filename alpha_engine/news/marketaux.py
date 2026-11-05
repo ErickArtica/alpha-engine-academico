@@ -92,8 +92,9 @@ class NewsArticle(BaseModel):
     source: str | None = Field(default=None, max_length=160)
     public_url: str
     published_at: datetime
-    bitcoin_symbol: Literal["CC:BTC"] = "CC:BTC"
+    bitcoin_symbol: Literal["CC:BTC", "BTCUSD"] = "CC:BTC"
     bitcoin_name: Literal["Bitcoin"] = "Bitcoin"
+    match_score: float | None = Field(default=None, ge=0, le=100, allow_inf_nan=False)
     sentiment_score: float | None = Field(default=None, ge=-1, le=1, allow_inf_nan=False, strict=True)
     sentiment_status: Literal["VALID", "MISSING", "INVALID", "AMBIGUOUS"]
 
@@ -111,7 +112,8 @@ class NewsArticle(BaseModel):
         return utc(value)
 
 
-def normalize_marketaux_article(item: object, cutoff: datetime, token: str = "") -> NewsArticle | None:
+def normalize_marketaux_article(item: object, cutoff: datetime, token: str = "", *,
+                               min_match_score: float = 0) -> NewsArticle | None:
     if not isinstance(item, dict):
         return None
     title, url = clean_text(item.get("title"), token), public_article_url(item.get("url"), token)
@@ -124,8 +126,19 @@ def normalize_marketaux_article(item: object, cutoff: datetime, token: str = "")
     entities = item.get("entities")
     if not isinstance(entities, list):
         return None
-    bitcoin = [e for e in entities if isinstance(e, dict) and e.get("symbol") == "CC:BTC"
-               and clean_text(e.get("name"), token, 120) == "Bitcoin"]
+    def is_bitcoin(entity):
+        if not isinstance(entity, dict):
+            return False
+        name = (clean_text(entity.get("name"), token, 120) or "").casefold()
+        legacy = entity.get("symbol") == "CC:BTC" and name == "bitcoin"
+        documented = (entity.get("symbol") == "BTCUSD" and entity.get("exchange") == "CC"
+                      and entity.get("type") == "cryptocurrency" and name in {"bitcoin", "bitcoin usd"})
+        if not (legacy or documented):
+            return False
+        match = entity.get("match_score")
+        return min_match_score == 0 or (type(match) in {int, float}
+            and math.isfinite(match) and min_match_score <= match <= 100)
+    bitcoin = [e for e in entities if is_bitcoin(e)]
     if not bitcoin:
         return None
     values = []
@@ -154,6 +167,10 @@ def normalize_marketaux_article(item: object, cutoff: datetime, token: str = "")
     return NewsArticle(article_identifier=hashlib.sha256(("MARKETAUX:" + key).encode()).hexdigest(),
                        provider_uuid=identifier, title=title, source=clean_text(item.get("source"), token, 160),
                        public_url=url, published_at=published,
+                       bitcoin_symbol="BTCUSD" if any(e.get("symbol") == "BTCUSD" for e in bitcoin) else "CC:BTC",
+                       match_score=max((e["match_score"] for e in bitcoin
+                                        if type(e.get("match_score")) in {int,float}
+                                        and math.isfinite(e["match_score"]) and 0 <= e["match_score"] <= 100), default=None),
                        sentiment_score=values[0] if status == "VALID" else None, sentiment_status=status)
 
 
@@ -183,14 +200,17 @@ def suppress_http_details():
 
 
 class MarketauxNewsClient:
-    def __init__(self, token: str, *, transport: httpx.BaseTransport | None = None):
+    def __init__(self, token: str, *, transport: httpx.BaseTransport | None = None,
+                 min_match_score: float = 0, allow_empty_filtered: bool = False):
         self._token, self._transport = token, transport
+        self.min_match_score, self.allow_empty_filtered = min_match_score, allow_empty_filtered
+        self.diagnostics = {}
 
     def fetch(self, now: datetime, *, timeout_seconds: float) -> list[NewsArticle]:
         if not self._token:
             raise MarketauxUnavailable("NOT_CONFIGURED")
         cutoff = utc(now)
-        params = {"api_token": self._token, "symbols": "CC:BTC", "search": "Bitcoin", "limit": 3, "page": 1,
+        params = {"api_token": self._token, "symbols": "BTCUSD", "search": "Bitcoin", "limit": 3, "page": 1,
                   "filter_entities": "true", "must_have_entities": "true", "group_similar": "true",
                   "published_after": (cutoff - timedelta(hours=24)).strftime("%Y-%m-%dT%H:%M:%S"),
                   "published_before": cutoff.strftime("%Y-%m-%dT%H:%M:%S")}
@@ -201,6 +221,7 @@ class MarketauxNewsClient:
                 with httpx.Client(transport=transport, trust_env=False, follow_redirects=False,
                                   timeout=httpx.Timeout(timeout_seconds, connect=min(3., timeout_seconds))) as client:
                     with client.stream("GET", ENDPOINT, params=params) as response:
+                        self.diagnostics["http_status"] = response.status_code
                         if response.status_code != 200:
                             reason = {401:"AUTHENTICATION_FAILED", 402:"RATE_LIMIT", 403:"PLAN_RESTRICTION", 429:"RATE_LIMIT"}.get(response.status_code, "PROVIDER_UNAVAILABLE")
                             raise MarketauxUnavailable(reason)
@@ -219,7 +240,8 @@ class MarketauxNewsClient:
                     or type(meta.get("found")) is not int or meta["returned"] != len(body["data"])
                     or meta["found"] < meta["returned"]):
                 raise MarketauxUnavailable("INVALID_RESPONSE")
-            normalized = [normalize_marketaux_article(item, cutoff, self._token) for item in body["data"]]
+            normalized = [normalize_marketaux_article(item, cutoff, self._token,
+                          min_match_score=self.min_match_score) for item in body["data"]]
             # Exact snapshot membership: do not merge old cached article rows.
             articles, ids, urls = [], set(), set()
             for article in normalized:
@@ -227,7 +249,9 @@ class MarketauxNewsClient:
                     articles.append(article)
                     ids.add(article.article_identifier)
                     urls.add(article.public_url)
-            if body["data"] and not articles:
+            self.diagnostics.update(provider_returned=len(body["data"]), normalized_articles=len(articles),
+                                    provider_found=meta["found"], entity_symbol="BTCUSD", entity_exchange="CC")
+            if body["data"] and not articles and not self.allow_empty_filtered:
                 raise MarketauxUnavailable("INVALID_RESPONSE")
             return articles
         except MarketauxUnavailable:

@@ -14,6 +14,9 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field
 
 from deploy.render.academic_demo import canonical, fingerprint
+from deploy.render.academic_nvidia import (
+    BoundedNvidiaClient, GenerationPolicy, NvidiaTrialError, compact_context,
+)
 
 
 class Explanation(BaseModel):
@@ -25,28 +28,6 @@ class Explanation(BaseModel):
     key_factors: list[str] = Field(min_length=1, max_length=6)
     risks: list[str] = Field(min_length=1, max_length=6)
     warning: str = Field(min_length=1, max_length=400)
-
-
-class BoundedNvidiaClient:
-    """Existing NVIDIA adapter with a bounded, non-retrying HTTP response reader."""
-    def __init__(self):
-        self.client = httpx.Client(base_url="https://integrate.api.nvidia.com/v1/",
-                                  trust_env=False, follow_redirects=False)
-
-    def post(self, path, *, json, headers, timeout):
-        started = perf_counter()
-        with self.client.stream("POST", path, json=json, headers=headers,
-                                timeout=httpx.Timeout(timeout, connect=3, read=timeout, write=5, pool=2)) as response:
-            response.raise_for_status()
-            body = bytearray()
-            for chunk in response.iter_bytes():
-                body.extend(chunk)
-                if len(body) > 64000 or perf_counter() - started > timeout:
-                    raise httpx.ReadTimeout("Bounded academic provider response")
-            return httpx.Response(response.status_code, content=bytes(body), request=response.request)
-
-    def close(self):
-        self.client.close()
 
 
 def persisted_snapshot(settings, prediction_id):
@@ -101,19 +82,22 @@ def rule_context(snapshot, settings, has_long, now):
 def news_view(cache, now):
     base = dict(provider="MARKETAUX", status="N/A", classification="N/A", score=None,
                 considered=0, fetched_at=None, latest_news_at=None, method="SIMPLE_MEAN",
-                reason="NO_AUTHORIZED_SNAPSHOT", scope="AUTHORIZED_DEMO_ONLY")
+                reason="NO_AUTHORIZED_SNAPSHOT", scope="AUTHORIZED_DEMO_ONLY",
+                classification_threshold=.05, max_article_age_seconds=3600, min_match_score=10)
     if not cache:
         return base
     fetched = cache["fetched_at"]
     observations = cache["observations"]
     recent = [item for item in observations if 0 <= now - item["at"] <= 3600]
+    # Observations come only from the normalized Bitcoin entities, not general crypto sentiment.
+    recent = list({item.get("id", "legacy:"+str(i)):item for i,item in enumerate(recent)}.values())
     scores = [item["score"] for item in recent if item["score"] is not None]
     score = sum(scores) / len(scores) if scores else None
     age = now - fetched
     status = ("STALE" if age >= 1800 else "LIVE") if scores else ("HISTORICO" if observations and not recent else "N/A")
     if age < 0:
         status, score = "N/A", None
-    base.update(status=status, classification="N/A" if score is None else "POSITIVO" if score > 0 else "NEGATIVO" if score < 0 else "NEUTRAL",
+    base.update(status=status, classification="N/A" if score is None else "POSITIVO" if score >= .05 else "NEGATIVO" if score <= -.05 else "NEUTRAL",
                 score=score, considered=len(scores) if score is not None else 0,
                 fetched_at=datetime.fromtimestamp(fetched, timezone.utc).isoformat(),
                 latest_news_at=datetime.fromtimestamp(max(i["at"] for i in recent), timezone.utc).isoformat() if recent else None,
@@ -127,6 +111,7 @@ class AcademicService:
         self.settings, self.store, self.clock = settings, store, clock
         self.snapshot_loader = snapshot_loader
         self.provider_factory, self.news_client = provider_factory, news_client
+        self.generation_policy = GenerationPolicy.load()
 
     def _news(self, cfg):
         if not (cfg.news and cfg.news_rights):
@@ -196,10 +181,11 @@ class AcademicService:
                 provider = self.provider_factory(s)
             else:
                 from alpha_engine.ai.providers.nvidia import NvidiaProvider
-                bounded_client = BoundedNvidiaClient()
+                bounded_client = BoundedNvidiaClient(policy=self.generation_policy)
                 provider = NvidiaProvider(s, Path(__file__).with_name("academic_prompt.txt").read_text(encoding="utf-8"),
                                           client=bounded_client)
-            raw = provider.generate_recommendation({**context, "decision_hash": decision_hash}, timeout_seconds=30)
+            raw = provider.generate_recommendation(compact_context({**context, "decision_hash": decision_hash}),
+                                                   timeout_seconds=self.generation_policy.total)
             if not isinstance(raw, str) or len(raw.encode()) > 12000:
                 raise ValueError("Invalid explanation size")
             # Reject duplicate JSON keys and NaN before schema/coherence checks.
@@ -218,6 +204,13 @@ class AcademicService:
                     or explanation["risk_level"] != snapshot.risk.risk_level
                     or any(not text.strip() or len(text) > 1200 for text in explanation["key_factors"] + explanation["risks"])
                     or any(character.isdigit() for text in texts for character in text)
+                    or any(phrase in " ".join(texts).casefold() for phrase in (
+                        "ganancias garantizadas", "rentabilidad garantizada", "beneficio garantizado",
+                        "sin riesgo", "guaranteed profit", "risk-free",
+                    ))
+                    or (result["decision"]["action"] in {"WAIT", "HOLD"} and any(
+                        phrase in " ".join(texts).casefold() for phrase in
+                        ("compra ahora", "vende ahora", "debes comprar", "debes vender", "buy now", "sell now")))
                     or s.nvidia_api_key.get_secret_value() in raw):
                 status = "INCOHERENT_RESPONSE"
                 raise ValueError("Explanation contradicts deterministic envelope")
@@ -233,10 +226,19 @@ class AcademicService:
             self.store.update(save)
             status = "EXPLAINED"
             return 200, {**result, "status": status, "cached": False, "model": s.nvidia_model,
-                         "explanation": explanation}
+                         "explanation": explanation,
+                         "provider_diagnostics": bounded_client.telemetry if bounded_client else None}
+        except NvidiaTrialError as error:
+            status = str(error)
+            return 502, {**result, "status": status,
+                         "provider_diagnostics": bounded_client.telemetry if bounded_client else None}
+        except (ValueError, TypeError):
+            status = "INVALID_EXPLANATION" if status == "PROVIDER_FAILED" else status
+            return 502, {**result, "status": status,
+                         "provider_diagnostics": bounded_client.telemetry if bounded_client else None}
         except Exception:
-            return 502, {"status": status, "demo_only": True, "operational": False,
-                         "decision": result["decision"], "decision_hash": decision_hash}
+            return 502, {**result, "status": status,
+                         "provider_diagnostics": bounded_client.telemetry if bounded_client else None}
         finally:
             try:
                 if provider is not None:
@@ -244,7 +246,8 @@ class AcademicService:
             finally:
                 if bounded_client is not None:
                     bounded_client.close()
-                quotas.finish("llm", ticket, claims["sub"], status, decision_hash)
+                quotas.finish("llm", ticket, claims["sub"], status, decision_hash,
+                              diagnostics=bounded_client.telemetry if bounded_client else None)
 
     def refresh_news(self, claims, cfg, quotas):
         if not (cfg.news and cfg.news_rights):
@@ -269,12 +272,15 @@ class AcademicService:
                 status = "CACHED"
                 return 200, {"status": status, "news": self._news(cfg)}
             from alpha_engine.news.marketaux import MarketauxNewsClient
-            client = self.news_client or MarketauxNewsClient(self.settings.marketaux_api_token.get_secret_value())
+            client = self.news_client or MarketauxNewsClient(self.settings.marketaux_api_token.get_secret_value(),
+                                                           min_match_score=10, allow_empty_filtered=True)
             articles = client.fetch(datetime.fromtimestamp(now, timezone.utc), timeout_seconds=6)
             # Existing client normalizes/deduplicates. Persist only authorized derived observations,
             # never titles, URLs, descriptions, snippets, source text or raw provider payloads.
             cache = {"fetched_at": self.clock(), "observations": [
-                {"at": article.published_at.timestamp(), "score": article.sentiment_score}
+                {"id": article.article_identifier, "at": article.published_at.timestamp(),
+                 "score": article.sentiment_score, "match_score": article.match_score,
+                 "entity": article.bitcoin_symbol, "source": article.source}
                 for article in articles[:3]]}
             self.store.update(lambda state: state.update(news_cache=cache))
             status = "REFRESHED"

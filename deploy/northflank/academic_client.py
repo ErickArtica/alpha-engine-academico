@@ -1,5 +1,6 @@
 """Session-scoped server-to-server DEMO transport. No service/provider credential."""
 from urllib.parse import urlsplit
+import asyncio
 
 import httpx
 
@@ -32,12 +33,22 @@ class DemoClient:
             return 401, {"status": "UNAUTHORIZED"}
         headers = {"Authorization": "Bearer " + token} if token else {}
         try:
-            with httpx.Client(transport=self.transport, timeout=50, trust_env=False,
-                              follow_redirects=False) as client:
-                with client.stream("POST", self.origin + "/api/academic/" + action,
-                                   json=payload, headers=headers) as response:
+            return asyncio.run(self._post(action, payload, headers))
+        except Exception:
+            raise DemoUnavailable("El servicio DEMO no está disponible; no se reintentó la operación.") from None
+
+    async def _post(self, action, payload, headers):
+        # Provider total <= 90s; allow bounded context/quota/response overhead.
+        total = 115 if action == "explain" else 60
+        timeout = httpx.Timeout(110 if action == "explain" else 50, connect=5, write=5, pool=2)
+        async with asyncio.timeout(total):
+            transport = self.transport or httpx.AsyncHTTPTransport(retries=0, trust_env=False)
+            async with httpx.AsyncClient(transport=transport, timeout=timeout, trust_env=False,
+                                         follow_redirects=False) as client:
+                async with client.stream("POST", self.origin + "/api/academic/" + action,
+                                         json=payload, headers=headers) as response:
                     data = bytearray()
-                    for chunk in response.iter_bytes():
+                    async for chunk in response.aiter_bytes():
                         data.extend(chunk)
                         if len(data) > 32000:
                             raise DemoUnavailable("DEMO response capacity")
@@ -46,5 +57,3 @@ class DemoClient:
                     if not isinstance(result, dict) or not isinstance(result.get("status"), str):
                         raise ValueError("Invalid DEMO response")
                     return response.status_code, result
-        except Exception:
-            raise DemoUnavailable("El servicio DEMO no está disponible; no se reintentó la operación.") from None

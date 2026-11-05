@@ -121,14 +121,17 @@ class Quotas:
             return ticket
         return self.store.update(operation)
 
-    def finish(self, kind, ticket, subject, status, context_hash=None):
+    def finish(self, kind, ticket, subject, status, context_hash=None, *, diagnostics=None):
         now = int(self.clock())
         def operation(state):
             if state.get("leases", {}).get(kind, {}).get("ticket") == ticket:
                 del state["leases"][kind]
             receipts = state.setdefault("receipts", [])
-            receipts.append(dict(at=now, subject=fingerprint(subject), kind=kind, status=status,
-                                 context_hash=context_hash))
+            receipt = dict(at=now, subject=fingerprint(subject), kind=kind, status=status,
+                           context_hash=context_hash)
+            if diagnostics is not None:
+                receipt["provider_diagnostics"] = diagnostics
+            receipts.append(receipt)
             state["receipts"] = receipts[-50:]
         self.store.update(operation)
 

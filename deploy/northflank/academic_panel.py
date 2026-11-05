@@ -30,6 +30,8 @@ def show_news(news):
     score = news.get("score")
     c.metric("Score agregado", f"{score:+.4f}" if isinstance(score, (int, float)) else "N/A")
     st.caption(f"Noticias realmente consideradas: {news.get('considered', 0)} · media simple de scores BTC válidos")
+    st.caption("Clasificación: positivo ≥ +0.05, negativo ≤ −0.05; entre ambos, neutral. "
+               "Solo noticias Bitcoin de hasta una hora y relevancia mínima de diez cuando esté disponible.")
     st.caption("Fuente: Marketaux · última consulta: " + str(news.get("fetched_at") or "N/A"))
     st.caption("Última noticia considerada: " + str(news.get("latest_news_at") or "N/A"))
     st.info("Información contextual; N/A no equivale a neutral. No modifica XGBoost ni autoriza una operación.")
@@ -54,6 +56,7 @@ def render_panel(prediction_id=None):
         st.info("La sesión DEMO venció. Vuelva a ingresar.")
     if session is None:
         st.caption("Solo usuarios autorizados. La sesión dura como máximo quince minutos; no habilita trading ni carteras persistentes.")
+        st.caption("Sentimiento actual: N/A. Noticias y explicaciones no se consultan automáticamente.")
         with st.form("academic_login", clear_on_submit=True):
             user = st.text_input("Usuario DEMO", max_chars=40)
             password = st.text_input("Contraseña DEMO", type="password", max_chars=256)
@@ -93,7 +96,7 @@ def render_panel(prediction_id=None):
     a, b = st.columns(2)
     if a.button("Consultar contexto DEMO"):
         action = "context"
-    if b.button("Explicar con NVIDIA"):
+    if b.button("Generar explicación con IA"):
         action = "explain"
     c, d = st.columns(2)
     if c.button("Leer sentimiento guardado"):
@@ -102,7 +105,8 @@ def render_panel(prediction_id=None):
         action = "refresh-news"
     if action:
         try:
-            with st.spinner("Consultando el servicio académico..."):
+            with st.spinner("Esperando una respuesta completa de Muse; sin reintentos automáticos (máximo 115 s)."
+                            if action == "explain" else "Consultando el servicio académico..."):
                 code, reply = client.post(action, {} if "news" in action else payload, session["token"])
             if code == 401:
                 clear_session()
@@ -114,13 +118,17 @@ def render_panel(prediction_id=None):
                 else:
                     st.session_state[RESULT] = {"payload": payload, "reply": reply}
             else:
+                if action == "explain" and reply.get("decision"):
+                    st.session_state[RESULT] = {"payload": payload, "reply": reply}
                 st.warning("Operación no completada: " + str(reply.get("status", "UNAVAILABLE")))
         except DemoUnavailable:
             st.warning("El servicio no respondió correctamente. No se reintentó la solicitud.")
     result = st.session_state.get(RESULT)
     if result and result["payload"] == payload:
         reply = result["reply"]
+        st.caption("Estado de la operación IA/contexto: " + str(reply.get("status", "N/A")))
         prediction = reply.get("prediction", {})
+        st.subheader("A · Predicción estadística — XGBoost V1")
         a, b = st.columns(2)
         for column, label, key in ((a, "P(UP) de esta predicción", "prob_up"),
                                    (b, "P(DOWN) de esta predicción", "prob_down")):
@@ -128,7 +136,10 @@ def render_panel(prediction_id=None):
             column.metric(label, f"{value:.1%}" if isinstance(value, (int, float)) else "N/A")
         st.caption("Predicción consultada: " + str(reply.get("prediction_id", "N/A"))
                    + " · modelo: " + str(prediction.get("model_version", "N/A")))
+        st.subheader("B · Política determinista — gate 0.60")
         st.metric("Decisión determinista", reply.get("decision", {}).get("action", "N/A"))
+        st.caption("Posición virtual: " + str(reply.get("decision", {}).get("position", "N/A"))
+                   + " · riesgo: " + str(reply.get("risk", {}).get("level", "N/A")))
         source = reply.get("source", {})
         # A cached LIVE receipt is not evidence that its prediction remains current.
         until = source.get("valid_until")
@@ -153,6 +164,11 @@ def render_panel(prediction_id=None):
                 st.text("Riesgo: " + item)
             st.text(explanation.get("warning", ""))
             st.caption("Explicación recuperada de caché" if reply.get("cached") else "Explicación generada para la solicitud guardada en esta sesión")
+            diagnostics = reply.get("provider_diagnostics") or {}
+            if diagnostics.get("elapsed_seconds") is not None:
+                st.caption("Latencia del proveedor: " + str(diagnostics["elapsed_seconds"]) + " s")
+            if diagnostics.get("usage"):
+                st.caption("Consumo informado por el proveedor: " + str(diagnostics["usage"]))
         show_news(reply.get("news", {}))
     if "_academic_news" in st.session_state:
         show_news(st.session_state["_academic_news"])

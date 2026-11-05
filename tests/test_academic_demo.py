@@ -19,34 +19,30 @@ from deploy.render.academic_state import SQLiteState, StateUnavailable, Supabase
 
 
 class TransportDeadlineTests(unittest.TestCase):
-    def test_generation_read_timeout_is_thirty_seconds(self):
-        from deploy.render.academic_service import BoundedNvidiaClient
+    def test_generation_connect_and_read_timeouts_are_explicit(self):
+        from deploy.render.academic_nvidia import BoundedNvidiaClient
         calls=[]
         def respond(request):
             calls.append(request.extensions['timeout'])
-            return httpx.Response(200,json={'fixture':True})
-        client=httpx.Client(base_url='https://fixture.invalid/',transport=httpx.MockTransport(respond))
-        with patch('deploy.render.academic_service.httpx.Client',return_value=client):
-            transport=BoundedNvidiaClient()
-        try:transport.post('chat/completions',json={},headers={},timeout=30)
+            return httpx.Response(200,json={'choices':[{'finish_reason':'stop','message':{'content':'{}'}}]})
+        transport=BoundedNvidiaClient(transport=httpx.MockTransport(respond))
+        try:transport.post('chat/completions',json={},headers={},timeout=85)
         finally:transport.close()
-        self.assertEqual(calls[0]['read'],30)
+        self.assertEqual(calls[0]['read'],60)
+        self.assertEqual(calls[0]['connect'],5)
         self.assertEqual(len(calls),1)
 
-    def test_deadline_and_response_size_fail_without_retry(self):
-        from deploy.render.academic_service import BoundedNvidiaClient
-        for payload,clock in [(b'x'*64001,[0,1]),(b'{}',[0,31])]:
-            calls=[]
-            def respond(request):
-                calls.append(request)
-                return httpx.Response(200,content=payload)
-            client=httpx.Client(base_url='https://fixture.invalid/',transport=httpx.MockTransport(respond))
-            with patch('deploy.render.academic_service.httpx.Client',return_value=client):transport=BoundedNvidiaClient()
-            try:
-                with patch('deploy.render.academic_service.perf_counter',side_effect=clock):
-                    with self.assertRaises(httpx.ReadTimeout):transport.post('chat/completions',json={},headers={},timeout=30)
-            finally:transport.close()
-            self.assertEqual(len(calls),1)
+    def test_response_size_fails_without_retry(self):
+        from deploy.render.academic_nvidia import BoundedNvidiaClient,NvidiaTrialError
+        calls=[]
+        def respond(request):
+            calls.append(request)
+            return httpx.Response(200,content=b'x'*262145)
+        transport=BoundedNvidiaClient(transport=httpx.MockTransport(respond))
+        with self.assertRaisesRegex(NvidiaTrialError,'PROVIDER_RESPONSE_TOO_LARGE'):
+            transport.post('chat/completions',json={},headers={},timeout=85)
+        self.assertEqual(len(calls),1)
+
 
 NOW = datetime(2026, 11, 4, 22, 0, 20, tzinfo=timezone.utc)
 HASH = password_hash("classroom-fixture-password", salt=b"a" * 24)
@@ -86,7 +82,7 @@ class Provider:
         self.calls += 1
         if self.error:
             raise httpx.ReadTimeout("fixture failure")
-        assert timeout_seconds == 30
+        assert timeout_seconds == 85
         return json.dumps(dict(action="SELL" if self.wrong else context["decision_policy"]["action"],
             decision_hash=context["decision_hash"], risk_level=context["risk"]["level"],
             summary="Las reglas determinan la acción académica.", key_factors=["Probabilidad y posición verificadas"],
@@ -243,7 +239,7 @@ class ServiceTests(unittest.TestCase):
             self.assertEqual(body["model"],"meta/muse-glimmer-30b")
             self.assertEqual(body["max_tokens"],1024)
             context=json.loads(body["messages"][1]["content"])
-            raw=self.provider.generate_recommendation(context,timeout_seconds=30)
+            raw=self.provider.generate_recommendation(context,timeout_seconds=85)
             return httpx.Response(200,json={"choices":[{"finish_reason":"stop","message":{"content":raw}}]})
         client=httpx.Client(base_url="https://fixture-nvidia.invalid/",transport=httpx.MockTransport(response))
         self.addCleanup(client.close)
@@ -290,7 +286,7 @@ class ServiceTests(unittest.TestCase):
         def respond(request):
             calls.append(request)
             self.assertEqual(request.url.params["limit"],"3")
-            self.assertEqual(request.url.params["symbols"],"CC:BTC")
+            self.assertEqual(request.url.params["symbols"],"BTCUSD")
             items=[dict(title="Fixture Bitcoin article",url="https://news.example.test/"+str(i),
                         published_at=(NOW-timedelta(minutes=5+i)).isoformat(),
                         entities=[{"symbol":"CC:BTC","name":"Bitcoin","sentiment_score":score}])

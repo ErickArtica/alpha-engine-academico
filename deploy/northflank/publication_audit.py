@@ -34,10 +34,11 @@ def audit_publication() -> dict:
     proposed = set(manifest["new_files"])
     additional = set(manifest.get("additional_publication_files", []))
     academic_paths = {"deploy/render/" + name for name in (
-        "app.py", "academic_only.py", "academic_demo.py", "academic_state.py", "academic_service.py", "academic_prompt.txt",
+        "app.py", "academic_only.py", "academic_demo.py", "academic_state.py", "academic_service.py", "academic_nvidia.py", "academic_prompt.txt",
         "build_academic_bundle.py", "ACADEMIC_DEMO.md", "sql/academic_demo_state.sql",
         "sql/academic_demo_rollback.sql", "sql/academic_dependencies_inspect.sql")}
     academic_paths.add("tests/test_academic_demo.py")
+    academic_paths.update({"alpha_engine/news/marketaux.py", "tests/test_academic_provider_reliability.py"})
     if additional - academic_paths:
         raise ValueError("Unreviewed academic backend publication path")
     proposed |= additional

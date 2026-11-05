@@ -15,7 +15,7 @@ def build():
     files = {p.relative_to(ROOT).as_posix() for p in (ROOT / "alpha_engine").rglob("*")
              if p.is_file() and p.suffix in {".py", ".txt"} and "__pycache__" not in p.parts}
     files.update("deploy/render/" + name for name in (
-        "__init__.py", "app.py", "academic_only.py", "academic_demo.py", "academic_state.py", "academic_service.py",
+        "__init__.py", "app.py", "academic_only.py", "academic_demo.py", "academic_state.py", "academic_service.py", "academic_nvidia.py",
         "academic_prompt.txt", "muse_diagnostic.py", "muse_diagnostic_worker.py", "fixtures/muse3_context.json",
         "requirements.txt"))
     files.update("models/" + name for name in ("xgboost_v1.joblib", "xgboost_v1.sha256", "xgboost_v1_metadata.json"))
