@@ -4,6 +4,13 @@
 
 ## Guías actuales de reconstrucción
 
+**¿Empiezas desde cero?** Sigue los tutoriales nuevos, con índice, comprobaciones y comandos PowerShell:
+
+- [06 · Instalación local para principiantes](docs/06_TUTORIAL_LOCAL_PRINCIPIANTES.md)
+- [07 · Instalación cloud para principiantes, con cuentas propias](docs/07_TUTORIAL_CLOUD_PRINCIPIANTES.md)
+
+Las guías técnicas siguientes se conservan como referencia.
+
 1. [Instalación local](docs/01_INSTALACION_LOCAL.md)
 2. [Despliegue cloud](docs/02_DESPLIEGUE_NUBE.md)
 3. [Variables y credenciales](docs/03_VARIABLES_Y_CREDENCIALES.md)

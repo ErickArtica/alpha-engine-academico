@@ -57,8 +57,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 8467,
-      "sha256": "0240b25dc4e2ab4349007295a49e3a82c92ee4b12fabba83eb3a8bd06ecd082d"
+      "bytes": 8838,
+      "sha256": "ddeb7c35f7917e9564afd5a01717518893b2cbf47f6e5084646efb89292fd828"
     },
     {
       "path": "alpha_engine/__init__.py",
@@ -869,6 +869,16 @@
       "path": "docs/05_EVOLUCION_POST_ENTREGA.md",
       "bytes": 6288,
       "sha256": "4c204f622230eb4a3a47fdfdf40e8500f8bc6402144c7db929bac684782074b1"
+    },
+    {
+      "path": "docs/06_TUTORIAL_LOCAL_PRINCIPIANTES.md",
+      "bytes": 20710,
+      "sha256": "d1d68fe2ad448dd2e364b194b1ddf88eb600feb063e3848b65e30cabf6709748"
+    },
+    {
+      "path": "docs/07_TUTORIAL_CLOUD_PRINCIPIANTES.md",
+      "bytes": 46718,
+      "sha256": "62a2b9d98f0a2e1f2880eb5054e63db79e5b27acb67074822a79eaed7721b787"
     },
     {
       "path": "models/baseline_v1.json",
